@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DBMS & SQL — Interview Prep</title>
+<style>
+:root{
+  --bg:#f7fbff;
+  --panel:#ffffff;
+  --panel-2:#eef7ff;
+  --border:#cfe3f3;
+  --text:#17324d;
+  --text-dim:#668098;
+  --text-faint:#7d96aa;
+  --accent:#3aa76d;
+  --accent-dim:#8acfa9;
+  --amber:#d99a20;
+  --danger:#d96b63;
+  --blue:#4da6dc;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.5;padding-bottom:60px}
+header{position:sticky;top:0;z-index:20;background:linear-gradient(180deg,#fff 0%,rgba(255,255,255,.98) 100%);
+border-bottom:1px solid var(--border);padding:16px 20px 13px;backdrop-filter:blur(7px)}
+.header-inner{max-width:960px;margin:0 auto}
+.title-row{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px}
+h1{font-size:19px;margin:0;font-weight:700;letter-spacing:.2px}
+.subtitle{color:var(--text-dim);font-size:12.5px;margin-top:2px;font-family:var(--mono)}
+.progress-label{font-family:var(--mono);font-size:11px;color:var(--text-dim);display:flex;justify-content:space-between;margin:13px 0 6px}
+.progress-label b{color:var(--accent)}
+.progress-track{height:10px;border-radius:6px;background:var(--panel-2);border:1px solid var(--border);overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent-dim),var(--accent));width:0;transition:width .35s ease;border-radius:6px}
+.stats-row{display:flex;gap:18px;margin-top:9px;flex-wrap:wrap;font-family:var(--mono);font-size:11.5px;color:var(--text-dim)}
+.stats-row span b{color:var(--text);font-weight:600}
+.stats-row .done b{color:var(--accent)}
+.stats-row .star b{color:var(--amber)}
+.controls{max-width:960px;margin:14px auto 0;padding:0 20px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+#search{flex:1 1 220px;min-width:160px;background:var(--panel-2);border:1px solid var(--border);color:var(--text);
+padding:9px 12px;border-radius:8px;font-size:13px;outline:none}
+#search:focus{border-color:var(--accent-dim);box-shadow:0 0 0 3px rgba(58,167,109,.08)}
+.filter{background:var(--panel-2);border:1px solid var(--border);color:var(--text-dim);padding:8px 12px;
+border-radius:20px;font-size:12px;cursor:pointer;white-space:nowrap}
+.filter:hover{border-color:var(--accent-dim);color:var(--text)}
+.filter.active{background:rgba(58,167,109,.10);border-color:var(--accent);color:var(--accent);font-weight:600}
+.icon-btn{background:transparent;border:1px solid var(--border);color:var(--text-dim);padding:8px 12px;
+border-radius:8px;font-size:12px;cursor:pointer;font-family:var(--mono)}
+.icon-btn:hover{color:var(--text);border-color:var(--text-faint)}
+main{max-width:960px;margin:0 auto;padding:18px 20px 0}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color .15s ease;margin-bottom:8px}
+.card:hover{border-color:#b8d3e3}
+.card.reviewed{border-color:var(--accent-dim)}
+.card.important .q-row{background:rgba(217,154,32,.06)}
+.q-row{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;cursor:pointer;min-height:46px}
+.check{appearance:none!important;-webkit-appearance:none!important;flex:0 0 18px!important;width:18px!important;min-width:18px!important;max-width:18px!important;height:18px!important;
+margin:2px 0 0 0!important;padding:0!important;border-radius:5px;border:1.5px solid var(--text-faint);background:#fff;
+cursor:pointer;display:block;position:relative}
+.check:hover{border-color:var(--accent)}
+.check:checked{background:var(--accent);border-color:var(--accent)}
+.check:checked:after{content:"✓";position:absolute;left:3px;top:-3px;color:#fff;font-size:13px;font-weight:700}
+.q-num{flex:0 0 auto;min-width:27px;height:27px;padding:0 5px;border-radius:7px;background:var(--panel-2);color:#287ba9;display:grid;place-items:center;font-size:10px;font-weight:700}
+.q-text{flex:1;min-width:0;font-size:13.5px;font-weight:500;line-height:1.4}
+.tag{font-size:10px;color:var(--text-faint);display:block;margin-top:2px;font-weight:400}
+.star-btn{flex:0 0 auto;background:transparent;border:none;box-shadow:none;cursor:pointer;font-size:16px;color:var(--text-faint);padding:0 2px;line-height:1}
+.star-btn:hover{box-shadow:none;transform:none}
+.star-btn.on{color:var(--amber)}
+.chevron{flex:0 0 auto;color:var(--text-faint);font-size:11px;transition:transform .15s ease;margin-top:4px}
+.card.open .chevron{transform:rotate(90deg)}
+.answer{display:none;padding:12px 14px 14px 70px;color:var(--text-dim);font-size:13px;white-space:pre-wrap;
+font-family:var(--sans);border-top:1px solid var(--border);margin-top:-1px}
+.card.open .answer{display:block}
+.answer pre,.answer code{font-family:var(--mono)}
+.empty-state{text-align:center;color:var(--text-faint);padding:40px 20px;font-size:13px;font-family:var(--mono)}
+footer{max-width:960px;margin:24px auto 0;padding:0 20px 30px;color:var(--text-faint);font-size:11.5px;font-family:var(--mono);text-align:center}
+.toast{position:fixed;right:20px;bottom:20px;background:var(--text);color:#fff;padding:9px 13px;border-radius:8px;
+box-shadow:0 8px 25px rgba(20,50,70,.18);font-size:12px;opacity:0;transform:translateY(8px);pointer-events:none;transition:.2s;z-index:100}
+.toast.show{opacity:1;transform:none}
+.top-btn{position:fixed;right:20px;bottom:62px;width:36px;height:36px;border-radius:8px;background:#fff;
+border:1px solid var(--border);box-shadow:0 5px 18px rgba(35,80,110,.12);display:none;z-index:40}
+.top-btn.show{display:block}
+@media(max-width:600px){
+ header{position:sticky;padding:14px 14px 11px}
+ .header-inner{padding:0} .controls{padding:0 14px} main{padding:14px 14px 0}
+ #search{min-width:100%} .stats-row{gap:12px} .answer{padding-left:14px}
+ .q-row{gap:8px;padding:10px 11px} .q-text{font-size:13px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="title-row">
+      <h1>🗄️ DBMS & SQL Interview Prep</h1>
+    </div>
+    <div class="subtitle">// compact revision tracker — review, mark important, and revisit weak areas</div>
+
+    <div class="progress-label">
+      <span>REVISION PROGRESS</span>
+      <span><b id="pct-label">0%</b> reviewed</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+
+    <div class="stats-row">
+      <span>total <b id="stat-total">0</b></span>
+      <span class="done">reviewed <b id="stat-done">0</b></span>
+      <span>remaining <b id="stat-remaining">0</b></span>
+      <span class="star">starred <b id="stat-star">0</b></span>
+    </div>
+  </div>
+</header>
+
+<div class="controls">
+  <input id="search" type="text" placeholder="Search questions or answers…" autocomplete="off">
+  <button class="filter active" data-filter="all">All</button>
+  <button class="filter" data-filter="important">★ Important</button>
+  <button class="filter" data-filter="unreviewed">Revision Due</button>
+  <button class="filter" data-filter="reviewed">Reviewed</button>
+  <button class="icon-btn" id="expand-all">Expand all</button>
+  <button class="icon-btn" id="collapse-all">Collapse all</button>
+  <button class="icon-btn" id="reset-btn">Reset progress</button>
+</div>
+
+<main id="main"></main>
+<footer>Progress, Important flags, and open/closed answers are saved automatically in this browser.</footer>
+
+<div id="toast" class="toast"></div>
+<button id="top-btn" class="top-btn" title="Back to top">↑</button>
+
+<script>
+const DATA = [{"id": 1, "num": 1, "title": "DDL, DML? Difference between DELETE and TRUNCATE? WHERE vs HAVING", "answer": "DDL (Data Definition Language)\nUsed to define or modify the database structure/schema.\nCommands: CREATE, ALTER, DROP, TRUNCATE, RENAME\n\nDDL query examples:\n-- Create a table\nCREATE TABLE Employee (\n    id INT PRIMARY KEY,\n    name VARCHAR(50),\n    salary INT\n);\n\n-- Add a column\nALTER TABLE Employee ADD COLUMN dept VARCHAR(20);\n\n-- Modify a column's datatype\nALTER TABLE Employee MODIFY COLUMN name VARCHAR(100);\n\n-- Drop a column\nALTER TABLE Employee DROP COLUMN dept;\n\n-- Drop the whole table\nDROP TABLE Employee;\n\n-- Rename a table\nRENAME TABLE Employee TO Staff;\n\n-- Empty a table instantly (see TRUNCATE below)\nTRUNCATE TABLE Employee;\n\nDML (Data Manipulation Language)\nUsed to manipulate data inside tables.\nCommands: INSERT, UPDATE, DELETE\n\nDML query examples:\n-- Insert a row\nINSERT INTO Employee (id, name, salary) VALUES (1, 'Adesh', 45000);\n\n-- Insert multiple rows\nINSERT INTO Employee (id, name, salary) VALUES\n(2, 'Rahul', 52000),\n(3, 'Aman', 48000);\n\n-- Update a row\nUPDATE Employee SET salary = 55000 WHERE id = 1;\n\n-- Delete specific rows (see DELETE below)\nDELETE FROM Employee WHERE id = 1;\n\nDELETE vs TRUNCATE\nDELETE\n1. DML command\n2. Removes selected rows\n3. WHERE clause can be used\n4. Slower \u2014 row-by-row deletion\n5. Can rollback\n6. Does not reset identity in most DBs\n\nTRUNCATE\n1. DDL command\n2. Removes all rows\n3. WHERE clause cannot be used\n4. Faster \u2014 removes complete data quickly\n5. Usually cannot rollback after commit\n6. Resets identity in most DBs\n\nExample:\nDELETE FROM Employee WHERE id = 1;\nTRUNCATE TABLE Employee;\n\nWHERE vs HAVING\nWHERE filters individual rows before grouping.\nHAVING filters groups \u2014 used after GROUP BY, can use aggregate functions, works on grouped data.\n\nExample \u2014 WHERE (filters rows first):\nSELECT * FROM Employee WHERE salary > 40000;\n\nExample \u2014 HAVING (filters groups after aggregation):\nSELECT department, COUNT(*)\nFROM Employee\nGROUP BY department\nHAVING COUNT(*) > 5;"}, {"id": 2, "num": 2, "title": "Explain INNER JOIN vs LEFT JOIN with examples.", "answer": "INNER JOIN\n1. Returns only matching records from both tables\n2. Non-matching rows are ignored\n3. Common data between tables is returned\n\nSyntax:\nSELECT columns\nFROM table1\nINNER JOIN table2\nON table1.column = table2.column;\n\nExample:\n-- Employee(id, name, dept_id)   Department(dept_id, dept_name)\nSELECT e.name, d.dept_name\nFROM Employee e\nINNER JOIN Department d\nON e.dept_id = d.dept_id;\n-- Returns only employees that have a matching department\n\nLEFT JOIN\n1. Returns all records from the left table\n2. Plus matching records from the right table\n3. Non-matching right table data becomes NULL\n\nSyntax:\nSELECT columns\nFROM table1\nLEFT JOIN table2\nON table1.column = table2.column;\n\nExample:\nSELECT e.name, d.dept_name\nFROM Employee e\nLEFT JOIN Department d\nON e.dept_id = d.dept_id;\n-- Returns every employee; dept_name is NULL if they have no matching department"}, {"id": 3, "num": 3, "title": "ACID properties?", "answer": "ACID properties ensure reliable and safe database transactions.\nA = Atomicity, C = Consistency, I = Isolation, D = Durability\n\n1. ATOMICITY\nDefinition: A transaction should complete fully or not execute at all \u2014 either all operations happen or none happen.\nExample: Money transfer \u2014 deduct from Account A, add to Account B. If the system fails after the deduction, it should roll back.\nKey point: \"No partial transaction\"\n\nQuery example (atomic transfer):\nBEGIN TRANSACTION;\nUPDATE Account SET balance = balance - 500 WHERE id = 'A';\nUPDATE Account SET balance = balance + 500 WHERE id = 'B';\nCOMMIT;\n-- If anything fails before COMMIT, run ROLLBACK; instead so neither update sticks\n\n2. CONSISTENCY\nDefinition: The database should remain in a valid state before and after a transaction; rules and constraints should not break.\nExample: A bank balance cannot become negative if the rule does not allow it.\nKey point: \"Maintains data correctness\"\n\nQuery example (constraint enforcing consistency):\nALTER TABLE Account ADD CONSTRAINT chk_balance CHECK (balance >= 0);\n\n3. ISOLATION\nDefinition: Multiple transactions should not affect each other while executing simultaneously \u2014 they execute independently.\nExample: Two users booking the same seat at the same time should not both get it.\nKey point: \"Prevents transaction interference\"\n\nQuery example (setting isolation level):\nSET TRANSACTION ISOLATION LEVEL SERIALIZABLE;\n\n4. DURABILITY\nDefinition: Once a transaction is committed, the data is permanently saved and is not lost even after a crash or power failure.\nExample: After a successful payment, the transaction details remain saved even if the server crashes.\n\nShort answers:\nAtomicity   -> All or nothing\nConsistency -> Maintains valid data\nIsolation   -> Transactions execute independently\nDurability  -> Committed data is permanent"}, {"id": 4, "num": 4, "title": "Indexing? When to use it? Advantages / Disadvantages", "answer": "Definition: Indexing is a technique used to improve the speed of data retrieval from a table \u2014 it works like a book index, so the database directly finds data instead of scanning the whole table.\n\nHow it works:\nWithout index -> database scans the entire table (slow for large data)\nWith index -> database quickly locates records (faster searching)\n\nQuery examples:\n-- Create a simple index\nCREATE INDEX idx_emp_name ON Employee(name);\n\n-- Create a composite (multi-column) index\nCREATE INDEX idx_emp_dept_salary ON Employee(dept, salary);\n\n-- Create a unique index\nCREATE UNIQUE INDEX idx_emp_email ON Employee(email);\n\n-- Query that benefits from the index\nSELECT * FROM Employee\nWHERE name = 'Adesh';\n\n-- Drop an index\nDROP INDEX idx_emp_name;\n\nAdvantages\n1. Faster SELECT queries\n2. Improves search performance\n3. Faster JOIN operations\n4. Faster sorting and filtering\n5. Reduces table scan time\n\nDisadvantages\n1. Uses extra storage space\n2. Slows INSERT operations\n3. Slows UPDATE operations\n4. Slows DELETE operations\n5. Index maintenance overhead\n\nB-Tree Index (most common)\nA balanced tree structure used for fast searching, insertion, deletion, and sorting.\nUsed in: MySQL, PostgreSQL, Oracle, SQL Server.\nSearch time complexity: O(log n)\n\nHash Index\nUses a hash function for fast equality lookups (best for = comparisons, not ranges)."}, {"id": 5, "num": 5, "title": "How do you implement pagination in SQL?", "answer": "Definition: Pagination fetches data in small chunks/pages instead of loading all records at once.\nUsed in: web applications, REST APIs, large tables, infinite scrolling.\n\nWhy it matters:\n1. Improves performance\n2. Reduces memory usage\n3. Faster response time\n4. Better user experience\n\nMySQL / PostgreSQL syntax:\nSELECT *\nFROM Employee\nLIMIT page_size OFFSET skip_rows;\n\nFirst page:\nSELECT * FROM Employee LIMIT 10 OFFSET 0;\n-> Fetch first 10 records\n\nSecond page:\nSELECT * FROM Employee LIMIT 10 OFFSET 10;\n-> Skip first 10 rows, fetch next 10\n\nSQL Server equivalent:\nSELECT * FROM Employee\nORDER BY id\nOFFSET 10 ROWS FETCH NEXT 10 ROWS ONLY;\n\nOracle equivalent (12c+):\nSELECT * FROM Employee\nORDER BY id\nOFFSET 10 ROWS FETCH NEXT 10 ROWS ONLY;"}, {"id": 6, "num": 6, "title": "Views over tables? Why use views? View vs Materialized View? Advantages/Disadvantages", "answer": "Definition: A View is a virtual table created from one or more tables using a SQL query. It does not store actual data \u2014 only the query.\n\nWhy use views:\n1. Simplifies complex queries\n2. Provides security\n3. Hides sensitive columns\n4. Reusable query logic\n5. Improves readability\n\nQuery examples:\n-- Create a view\nCREATE VIEW EmployeeView AS\nSELECT id, name, department\nFROM Employee;\n\n-- Use the view like a table\nSELECT * FROM EmployeeView;\n\n-- Update a (simple, single-table) view\nUPDATE EmployeeView SET department = 'IT' WHERE id = 1;\n\n-- Drop a view\nDROP VIEW EmployeeView;\n\n-- Create a materialized view (PostgreSQL / Oracle)\nCREATE MATERIALIZED VIEW EmployeeSummary AS\nSELECT department, COUNT(*) AS total, AVG(salary) AS avg_salary\nFROM Employee\nGROUP BY department;\n\n-- Refresh a materialized view when the underlying data changes\nREFRESH MATERIALIZED VIEW EmployeeSummary;\n\nVIEW\n1. Virtual table\n2. Does not store data\n3. Fetches latest data every time\n4. Slower for heavy queries\n5. Less storage usage\n\nMATERIALIZED VIEW\n1. Physical storage of data\n2. Stores the query result\n3. Data may become stale\n4. Faster query performance\n5. Uses extra storage\n\nNote: a View looks like a normal table when queried, but internally it is just a saved SQL query.\n\nMain uses of a view: show only required columns, hide sensitive data, simplify complex queries, restrict access, reuse query logic.\n\nBonus \u2014 correct SQL execution order:\nFROM -> JOIN -> WHERE -> GROUP BY -> HAVING -> SELECT -> ORDER BY -> LIMIT/OFFSET"}, {"id": 7, "num": 8, "title": "Self join? Why is it required?", "answer": "Definition: A Self Join is a join where a table is joined with itself. It's used when rows in the same table are related to each other.\n\nWhy it's required:\n1. Find hierarchical relationships\n2. Compare rows within the same table\n3. Employee-manager relationships\n4. Parent-child relationships\n\nEmployee Table\nemp_id | emp_name | manager_id\n1      | Adesh    | NULL\n2      | Rahul    | 1\n3      | Aman     | 1\n4      | Priya    | 2\n\nMeaning: Rahul's manager is Adesh; Priya's manager is Rahul.\n\nSelf join query:\nSELECT\n    e.emp_name AS Employee,\n    m.emp_name AS Manager\nFROM Employee e\nLEFT JOIN Employee m\nON e.manager_id = m.emp_id;\n\nOutput:\nEmployee | Manager\nAdesh    | NULL\nRahul    | Adesh\nAman     | Adesh\nPriya    | Rahul\n\nBonus example \u2014 employees who share the same manager:\nSELECT a.emp_name AS Employee1, b.emp_name AS Employee2, a.manager_id\nFROM Employee a\nJOIN Employee b\nON a.manager_id = b.manager_id AND a.emp_id <> b.emp_id;"}, {"id": 8, "num": 9, "title": "Find the employee with the second (or Nth) max salary. Employee[id, name, salary, dept]", "answer": "Second highest salary:\nSELECT name, salary\nFROM Employee\nWHERE salary = (\n    SELECT MAX(salary)\n    FROM Employee\n    WHERE salary < (\n        SELECT MAX(salary)\n        FROM Employee\n    )\n);\n\nSecond highest salary \u2014 alternative using LIMIT/OFFSET (MySQL/Postgres):\nSELECT DISTINCT salary\nFROM Employee\nORDER BY salary DESC\nLIMIT 1 OFFSET 1;\n\nNth highest salary \u2014 using DENSE_RANK() (best approach):\nSELECT name, salary\nFROM (\n    SELECT name,\n           salary,\n           DENSE_RANK() OVER (ORDER BY salary DESC) AS rnk\n    FROM Employee\n) e\nWHERE rnk = N;\n\nDENSE_RANK() is a window function used to rank rows, without gaps for ties.\n\nPARTITION BY divides rows into groups within a window function.\nThe key difference: GROUP BY combines rows into one row per group, while PARTITION BY keeps all rows separate and just labels each with its group's ranking.\n\nTop 3 earners per department:\nSELECT id, name, dept, salary\nFROM (\n    SELECT id, name, dept, salary,\n           DENSE_RANK() OVER (\n               PARTITION BY dept\n               ORDER BY salary DESC\n           ) AS rnk\n    FROM Employee\n) e\nWHERE rnk <= 3;"}, {"id": 9, "num": 17, "title": "Partitioning? Different types of partitioning (Range, List, Hash)", "answer": "Definition: Partitioning splits a large table into smaller physical parts called partitions. Logically it behaves like one table, but internally the data is stored across multiple partitions.\n\nBenefits:\n1. Faster query performance\n2. Easy maintenance\n3. Faster backup and recovery\n4. Better scalability\n5. Efficient handling of huge data\n\n1. Range Partitioning \u2014 data divided based on ranges of values.\nCREATE TABLE Employee (\n    id INT, name VARCHAR(50), salary INT\n)\nPARTITION BY RANGE (salary) (\n    PARTITION p1 VALUES LESS THAN (50000),\n    PARTITION p2 VALUES LESS THAN (100000),\n    PARTITION p3 VALUES LESS THAN MAXVALUE\n);\nUse cases: date-wise data, salary ranges, transaction tables.\n\n2. List Partitioning \u2014 data divided based on specific values.\nCREATE TABLE Employee (\n    id INT, name VARCHAR(50), dept VARCHAR(20)\n)\nPARTITION BY LIST (dept) (\n    PARTITION p_it VALUES IN ('IT'),\n    PARTITION p_hr VALUES IN ('HR'),\n    PARTITION p_sales VALUES IN ('SALES')\n);\n\n3. Hash Partitioning \u2014 data distributed using a hash function.\nCREATE TABLE Employee (\n    id INT, name VARCHAR(50)\n)\nPARTITION BY HASH(id)\nPARTITIONS 4;\n\nQuerying a specific partition directly (MySQL):\nSELECT * FROM Employee PARTITION (p1);\n\nPartitioning vs Sharding:\nPartitioning splits a table inside the same database.\nSharding splits data across multiple databases/servers."}, {"id": 10, "num": 18, "title": "Difference between Horizontal Partitioning and Vertical Partitioning", "answer": "Horizontal Partitioning: rows are divided into multiple partitions. Each partition contains the same columns but different rows.\n\nExample \u2014 horizontal split by year:\nCREATE TABLE Orders_2024 (\n    id INT, customer_id INT, order_date DATE, amount DECIMAL\n);\nCREATE TABLE Orders_2025 (\n    id INT, customer_id INT, order_date DATE, amount DECIMAL\n);\n-- Same columns in both, but rows split by year\n\nVertical Partitioning: columns are divided into multiple partitions. Each partition contains fewer columns and is usually linked using the primary key.\n\nExample \u2014 vertical split of frequently vs rarely used columns:\nCREATE TABLE Employee_Core (\n    id INT PRIMARY KEY, name VARCHAR(50), dept VARCHAR(20)\n);\nCREATE TABLE Employee_Extra (\n    id INT PRIMARY KEY, resume TEXT, profile_photo BLOB,\n    FOREIGN KEY (id) REFERENCES Employee_Core(id)\n);\n-- Rarely-accessed large columns (resume, photo) split into their own table"}, {"id": 11, "num": 22, "title": "Composite Keys? Primary Keys? Candidate Keys? Surrogate Keys? Can a table exist without a primary key?", "answer": "Primary Key\nA column or combination of columns used to uniquely identify each row in a table.\nProperties: unique, cannot be NULL, only one primary key per table.\n\nExample:\nCREATE TABLE Employee (\n    id INT PRIMARY KEY,\n    name VARCHAR(50)\n);\n\nComposite Key\nA primary key created using multiple columns together.\n\nExample:\nCREATE TABLE Enrollment (\n    student_id INT,\n    course_id INT,\n    enrolled_on DATE,\n    PRIMARY KEY (student_id, course_id)\n);\n\nCandidate Key\nA column or set of columns that can uniquely identify rows.\n\nExample \u2014 enforcing a candidate key with UNIQUE:\nCREATE TABLE Employee (\n    id INT PRIMARY KEY,\n    email VARCHAR(100) UNIQUE   -- candidate key, not chosen as PK\n);\n\nSurrogate Key\nAn artificially generated key with no business meaning \u2014 usually an auto-increment ID.\nExample:\nCREATE TABLE Employee (\n    id INT AUTO_INCREMENT PRIMARY KEY,\n    email VARCHAR(100)\n);\n\nCan a table exist without a primary key?\nYes, it is possible in many relational databases.\n\nExample (no primary key at all):\nCREATE TABLE LogEntry (\n    log_time DATETIME,\n    message VARCHAR(255)\n);\n\nImplications of not having a primary key:\na) Duplicate rows can be inserted\nb) Poor data integrity\nc) Slower updates and deletes\n\nHow to uniquely identify rows without a primary key:\na) Use a candidate key (e.g. email may uniquely identify users)\nb) Use composite columns (e.g. name + phone_number)\nc) Add a surrogate key \u2014 best practice (an auto-generated ID column)\n\nALTER TABLE LogEntry ADD COLUMN id INT AUTO_INCREMENT PRIMARY KEY;"}];
+const STORE_KEY = "dbms-sql-interview-tracker-v2";
+let state = JSON.parse(localStorage.getItem(STORE_KEY) || "{}");
+let currentFilter = "all";
+let searchTerm = "";
+
+function getState(id) {
+  return state[id] || {reviewed:false, important:false, open:false};
+}
+function save() {
+  localStorage.setItem(STORE_KEY, JSON.stringify(state));
+}
+function esc(str) {
+  return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+}
+function toast(msg) {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(window.__toast);
+  window.__toast = setTimeout(() => el.classList.remove("show"), 1600);
+}
+
+function updateStats() {
+  const total = DATA.length;
+  const reviewed = DATA.filter(x => getState(x.id).reviewed).length;
+  const starred = DATA.filter(x => getState(x.id).important).length;
+  const pct = total ? Math.round(reviewed / total * 100) : 0;
+  document.getElementById("stat-total").textContent = total;
+  document.getElementById("stat-done").textContent = reviewed;
+  document.getElementById("stat-remaining").textContent = total - reviewed;
+  document.getElementById("stat-star").textContent = starred;
+  document.getElementById("pct-label").textContent = pct + "%";
+  document.getElementById("progress-fill").style.width = pct + "%";
+}
+
+function render() {
+  const main = document.getElementById("main");
+  const q = searchTerm.toLowerCase();
+
+  const visible = DATA.filter(item => {
+    const s = getState(item.id);
+    const matchesSearch = !q || (item.title + " " + item.answer).toLowerCase().includes(q);
+    const matchesFilter =
+      currentFilter === "all" ||
+      (currentFilter === "important" && s.important) ||
+      (currentFilter === "unreviewed" && !s.reviewed) ||
+      (currentFilter === "reviewed" && s.reviewed);
+    return matchesSearch && matchesFilter;
+  });
+
+  if (!visible.length) {
+    main.innerHTML = '<div class="empty-state">No questions match your search or filter.</div>';
+    updateStats();
+    return;
+  }
+
+  main.innerHTML = visible.map(item => {
+    const s = getState(item.id);
+    return `
+      <section class="card ${s.reviewed ? "reviewed" : ""} ${s.important ? "important" : ""} ${s.open ? "open" : ""}" data-id="${item.id}">
+        <div class="q-row">
+          <input class="check" type="checkbox" ${s.reviewed ? "checked" : ""} aria-label="Mark reviewed">
+          <div class="q-num">Q${item.num}</div>
+          <div class="q-text">
+            ${esc(item.title)}
+            <div class="tag">${s.reviewed ? "✓ Reviewed" : "Revision due"}${s.important ? " · ★ Important" : ""}</div>
+          </div>
+          <button class="star-btn ${s.important ? "on" : ""}" title="Mark important" aria-label="Mark important">★</button>
+          <span class="chevron" aria-hidden="true">▶</span>
+        </div>
+        <div class="answer">${esc(item.answer)}</div>
+      </section>`;
+  }).join("");
+
+  [...main.children].forEach(card => {
+    const id = Number(card.dataset.id);
+    const qRow = card.querySelector(".q-row");
+    const check = card.querySelector(".check");
+    const star = card.querySelector(".star-btn");
+
+    qRow.addEventListener("click", e => {
+      if (e.target.closest(".check,.star-btn")) return;
+      state[id] = {...getState(id), open: !getState(id).open};
+      save();
+      render();
+    });
+
+    check.addEventListener("click", e => e.stopPropagation());
+    check.addEventListener("change", e => {
+      state[id] = {...getState(id), reviewed: e.target.checked};
+      save();
+      render();
+      toast(e.target.checked ? "Marked as reviewed" : "Moved to revision due");
+    });
+
+    star.addEventListener("click", e => {
+      e.stopPropagation();
+      state[id] = {...getState(id), important: !getState(id).important};
+      save();
+      render();
+      toast(getState(id).important ? "Marked important" : "Removed important flag");
+    });
+  });
+
+  updateStats();
+}
+
+document.getElementById("search").addEventListener("input", e => {
+  searchTerm = e.target.value;
+  render();
+});
+
+document.querySelectorAll(".filter").forEach(btn => btn.addEventListener("click", () => {
+  document.querySelectorAll(".filter").forEach(x => x.classList.remove("active"));
+  btn.classList.add("active");
+  currentFilter = btn.dataset.filter;
+  render();
+}));
+
+document.getElementById("expand-all").addEventListener("click", () => {
+  DATA.forEach(x => state[x.id] = {...getState(x.id), open:true});
+  save(); render(); toast("All answers expanded");
+});
+document.getElementById("collapse-all").addEventListener("click", () => {
+  DATA.forEach(x => state[x.id] = {...getState(x.id), open:false});
+  save(); render(); toast("All answers collapsed");
+});
+document.getElementById("reset-btn").addEventListener("click", () => {
+  if (confirm("Reset all reviewed and important progress?")) {
+    state = {};
+    save(); render(); toast("Progress reset");
+  }
+});
+
+const topBtn = document.getElementById("top-btn");
+window.addEventListener("scroll", () => topBtn.classList.toggle("show", window.scrollY > 450));
+topBtn.addEventListener("click", () => window.scrollTo({top:0,behavior:"smooth"}));
+
+document.addEventListener("keydown", e => {
+  if (e.key === "/" && document.activeElement.tagName !== "INPUT") {
+    e.preventDefault(); document.getElementById("search").focus();
+  }
+  if (e.key.toLowerCase() === "e" && document.activeElement.tagName !== "INPUT") {
+    document.getElementById("expand-all").click();
+  }
+  if (e.key.toLowerCase() === "c" && document.activeElement.tagName !== "INPUT") {
+    document.getElementById("collapse-all").click();
+  }
+});
+
+render();
+</script>
+</body>
+</html>

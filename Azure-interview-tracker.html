@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Microsoft Azure — Interview Prep</title>
+<style>
+:root{
+  --bg:#ffffff;
+  --panel:#ffffff;
+  --panel-2:#f4f6f9;
+  --border:#e4e9f0;
+  --text:#1f2937;
+  --text-dim:#6b7688;
+  --text-faint:#98a2b3;
+  --accent:#2f8f5b;
+  --accent-dim:#a9dcc0;
+  --amber:#c8891e;
+  --danger:#d1554c;
+  --blue:#3a8fd1;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.5;padding-bottom:60px}
+header{position:sticky;top:0;z-index:20;background:linear-gradient(180deg,#fff 0%,rgba(255,255,255,.97) 100%);
+border-bottom:1px solid var(--border);padding:16px 20px 13px;backdrop-filter:blur(7px)}
+.header-inner{max-width:960px;margin:0 auto}
+.title-row{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px}
+h1{font-size:19px;margin:0;font-weight:700;letter-spacing:.2px}
+.subtitle{color:var(--text-dim);font-size:12.5px;margin-top:2px;font-family:var(--mono)}
+.progress-label{font-family:var(--mono);font-size:11px;color:var(--text-dim);display:flex;justify-content:space-between;margin:13px 0 6px}
+.progress-label b{color:var(--accent)}
+.progress-track{height:10px;border-radius:6px;background:var(--panel-2);border:1px solid var(--border);overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent-dim),var(--accent));width:0;transition:width .35s ease;border-radius:6px}
+.stats-row{display:flex;gap:18px;margin-top:9px;flex-wrap:wrap;font-family:var(--mono);font-size:11.5px;color:var(--text-dim)}
+.stats-row span b{color:var(--text);font-weight:600}
+.stats-row .done b{color:var(--accent)}
+.stats-row .star b{color:var(--amber)}
+.controls{max-width:960px;margin:14px auto 0;padding:0 20px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+#search{flex:1 1 220px;min-width:160px;background:var(--panel-2);border:1px solid var(--border);color:var(--text);
+padding:9px 12px;border-radius:8px;font-size:13px;outline:none}
+#search:focus{border-color:var(--accent-dim);box-shadow:0 0 0 3px rgba(58,167,109,.08)}
+.filter{background:var(--panel-2);border:1px solid var(--border);color:var(--text-dim);padding:8px 12px;
+border-radius:20px;font-size:12px;cursor:pointer;white-space:nowrap}
+.filter:hover{border-color:var(--accent-dim);color:var(--text)}
+.filter.active{background:rgba(58,167,109,.10);border-color:var(--accent);color:var(--accent);font-weight:600}
+.icon-btn{background:transparent;border:1px solid var(--border);color:var(--text-dim);padding:8px 12px;
+border-radius:8px;font-size:12px;cursor:pointer;font-family:var(--mono)}
+.icon-btn:hover{color:var(--text);border-color:var(--text-faint)}
+main{max-width:960px;margin:0 auto;padding:18px 20px 0}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color .15s ease;margin-bottom:8px}
+.card:hover{border-color:#c7d2e0}
+.card.reviewed{border-color:var(--accent-dim)}
+.card.important .q-row{background:rgba(217,154,32,.06)}
+.q-row{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;cursor:pointer;min-height:46px}
+.check{appearance:none!important;-webkit-appearance:none!important;flex:0 0 18px!important;width:18px!important;min-width:18px!important;max-width:18px!important;height:18px!important;
+margin:2px 0 0 0!important;padding:0!important;border-radius:5px;border:1.5px solid var(--text-faint);background:#fff;
+cursor:pointer;display:block;position:relative}
+.check:hover{border-color:var(--accent)}
+.check:checked{background:var(--accent);border-color:var(--accent)}
+.check:checked:after{content:"✓";position:absolute;left:3px;top:-3px;color:#fff;font-size:13px;font-weight:700}
+.q-num{flex:0 0 auto;min-width:27px;height:27px;padding:0 5px;border-radius:7px;background:var(--panel-2);color:#287ba9;display:grid;place-items:center;font-size:10px;font-weight:700}
+.q-text{flex:1;min-width:0;font-size:13.5px;font-weight:500;line-height:1.4}
+.tag{font-size:10px;color:var(--text-faint);display:block;margin-top:2px;font-weight:400}
+.star-btn{flex:0 0 auto;background:transparent;border:none;box-shadow:none;cursor:pointer;font-size:16px;color:var(--text-faint);padding:0 2px;line-height:1}
+.star-btn:hover{box-shadow:none;transform:none}
+.star-btn.on{color:var(--amber)}
+.chevron{flex:0 0 auto;color:var(--text-faint);font-size:11px;transition:transform .15s ease;margin-top:4px}
+.card.open .chevron{transform:rotate(90deg)}
+.answer{display:none;padding:12px 14px 14px 70px;color:var(--text-dim);font-size:13px;white-space:pre-wrap;
+font-family:var(--sans);border-top:1px solid var(--border);margin-top:-1px}
+.card.open .answer{display:block}
+.answer pre,.answer code{font-family:var(--mono)}
+.empty-state{text-align:center;color:var(--text-faint);padding:40px 20px;font-size:13px;font-family:var(--mono)}
+footer{max-width:960px;margin:24px auto 0;padding:0 20px 30px;color:var(--text-faint);font-size:11.5px;font-family:var(--mono);text-align:center}
+.toast{position:fixed;right:20px;bottom:20px;background:var(--text);color:#fff;padding:9px 13px;border-radius:8px;
+box-shadow:0 8px 25px rgba(20,50,70,.18);font-size:12px;opacity:0;transform:translateY(8px);pointer-events:none;transition:.2s;z-index:100}
+.toast.show{opacity:1;transform:none}
+.top-btn{position:fixed;right:20px;bottom:62px;width:36px;height:36px;border-radius:8px;background:#fff;
+border:1px solid var(--border);box-shadow:0 5px 18px rgba(35,80,110,.12);display:none;z-index:40}
+.top-btn.show{display:block}
+@media(max-width:600px){
+ header{position:sticky;padding:14px 14px 11px}
+ .header-inner{padding:0} .controls{padding:0 14px} main{padding:14px 14px 0}
+ #search{min-width:100%} .stats-row{gap:12px} .answer{padding-left:14px}
+ .q-row{gap:8px;padding:10px 11px} .q-text{font-size:13px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="title-row">
+      <h1>☁️ Microsoft Azure Interview Prep</h1>
+    </div>
+    <div class="subtitle">// compact revision tracker — review, mark important, and revisit weak areas</div>
+
+    <div class="progress-label">
+      <span>REVISION PROGRESS</span>
+      <span><b id="pct-label">0%</b> reviewed</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+
+    <div class="stats-row">
+      <span>total <b id="stat-total">0</b></span>
+      <span class="done">reviewed <b id="stat-done">0</b></span>
+      <span>remaining <b id="stat-remaining">0</b></span>
+      <span class="star">starred <b id="stat-star">0</b></span>
+    </div>
+  </div>
+</header>
+
+<div class="controls">
+  <input id="search" type="text" placeholder="Search questions or answers…" autocomplete="off">
+  <button class="filter active" data-filter="all">All</button>
+  <button class="filter" data-filter="important">★ Important</button>
+  <button class="filter" data-filter="unreviewed">Revision Due</button>
+  <button class="filter" data-filter="reviewed">Reviewed</button>
+  <button class="icon-btn" id="expand-all">Expand all</button>
+  <button class="icon-btn" id="collapse-all">Collapse all</button>
+  <button class="icon-btn" id="reset-btn">Reset progress</button>
+</div>
+
+<main id="main"></main>
+<footer>Progress, Important flags, and open/closed answers are saved automatically in this browser.</footer>
+
+<div id="toast" class="toast"></div>
+<button id="top-btn" class="top-btn" title="Back to top">↑</button>
+
+<script>
+const DATA = [{"id": 1, "num": 1, "title": "What is Microsoft Azure?", "answer": "Microsoft Azure is a cloud computing platform provided by Microsoft that offers services like virtual machines, storage, databases, networking, and application hosting. It helps organizations build, deploy, and manage applications in the cloud with scalability, security, and high availability.\n\nKey features:\n1. Scalable \u2014 increase/decrease resources anytime\n2. Pay-as-you-go \u2014 pay only for what you use\n3. Highly available \u2014 Microsoft manages uptime and reliability\n4. Secure \u2014 built-in security and identity management\n5. Global \u2014 data centers across many countries"}, {"id": 2, "num": 2, "title": "What are the different types of cloud models?", "answer": "1. Public Cloud\nInfrastructure is owned and managed by a third-party provider (Azure, AWS, GCP). Resources are shared among multiple customers over the internet.\nFeatures: pay-as-you-go, highly scalable, no hardware maintenance, accessible from anywhere.\nExample: Hosting a Spring Boot application on Azure App Service.\n\n2. Private Cloud\nDedicated to a single organization \u2014 hosted in the company's own data center or managed by a third party.\nFeatures: more security and control, custom infrastructure, more expensive than public cloud.\nExample: A bank maintaining its own cloud infrastructure for sensitive customer data.\n\n3. Hybrid Cloud\nCombines public and private cloud. Sensitive data stays in the private cloud; scalable applications run on the public cloud.\nFeatures: flexible, cost-effective, better security balance.\nExample: A company stores customer data privately but hosts frontend applications on Azure."}, {"id": 3, "num": 3, "title": "Difference between IaaS, PaaS, and SaaS?", "answer": "1. IaaS (Infrastructure as a Service)\nProvider gives: virtual machines, storage, networking, servers.\nYou manage: OS, runtime, applications, data.\nAnalogy: an unfurnished room \u2014 you customize it however you like.\n\n2. PaaS (Platform as a Service)\nProvider manages: infrastructure, OS, runtime, scaling.\nYou manage: application code and data only.\nBest when developers want to focus purely on coding.\nAnalogy: a furnished room \u2014 everything is already there, you just move in.\n\n3. SaaS (Software as a Service)\nThe complete software is provided over the internet. Users just use the software \u2014 no infrastructure or deployment management.\nExamples: Microsoft 365, Gmail, Dropbox."}, {"id": 4, "num": 4, "title": "What are Azure Regions and Availability Zones?", "answer": "Azure Region\nA geographical area containing one or more data centers managed by Microsoft. Each region serves nearby users for lower latency, better performance, and data compliance.\nExamples: East US, West Europe, Central India, Southeast Asia.\n\nAvailability Zone (AZ)\nPhysically separate data centers within the same Azure Region. Each zone has independent power, cooling, and networking. If one zone fails, another zone keeps the application running.\n\nPurpose: Availability Zones improve fault tolerance, high availability, and disaster recovery."}, {"id": 5, "num": 5, "title": "What is Azure Resource Manager (ARM)?", "answer": "Azure Resource Manager (ARM) is the deployment and management service in Microsoft Azure. It helps you create, manage, organize, and deploy resources consistently through a single management layer.\n\nAzure Resources are services like: Virtual Machines, Storage Accounts, Databases, Virtual Networks, App Services \u2014 ARM manages all of them together.\n\nKey features of ARM:\n1. Resource Group Management \u2014 ARM organizes resources into Resource Groups.\n2. Infrastructure as Code (IaC) \u2014 deployments via ARM Templates (JSON) or Bicep.\n3. Role-Based Access Control (RBAC) \u2014 permissions and access control, e.g. Developer -> only app access, Admin -> full access.\n4. Consistent Deployment \u2014 the same infrastructure can be deployed repeatedly across Dev, QA (a safe testing area that looks like the real live system), and Production.\n5. Monitoring and Tagging \u2014 supports tags, policies, monitoring, and cost tracking."}, {"id": 6, "num": 7, "title": "Difference between scaling up and scaling out?", "answer": "1. Scaling Up (Vertical Scaling)\nIncreasing the power of an existing server \u2014 more CPU, more RAM, more storage.\nAdvantages: simple to implement, no major architecture changes.\nDisadvantages: hardware limit exists, downtime may occur, single point of failure.\n\n2. Scaling Out (Horizontal Scaling)\nAdding more servers/instances so multiple servers share the load instead of one server growing bigger.\nExample: going from 1 instance to 5 instances.\nAdvantages: highly scalable, better availability, fault tolerant.\nDisadvantages: more complex architecture, requires load balancing."}, {"id": 7, "num": 8, "title": "What is Azure Virtual Machine?", "answer": "Azure Virtual Machine (VM) \u2014 think of it as an empty computer (\"khali computer\") you configure yourself.\n\nAn Azure VM is a service that lets you create and run virtual servers in the cloud. It's part of the IaaS model. With Azure VM you can install operating systems, run applications, host websites/APIs, and configure servers just like a physical machine \u2014 without buying hardware.\n\nFeatures:\n1. Multiple operating systems \u2014 Windows Server, Linux (Ubuntu, CentOS, etc.)\n2. Full control \u2014 OS configuration, software installation, networking, security settings\n3. Scalable \u2014 increase CPU/RAM, resize VM anytime, create multiple VM instances\n4. Pay-as-you-go \u2014 you pay only for the resources used"}, {"id": 8, "num": 9, "title": "What is Azure App Service?", "answer": "Azure App Service \u2014 think of it as a computer that already has everything installed (like Java, an IDE, etc.) so you only worry about the code.\n\nAzure App Service is a PaaS offering used to build, deploy, host, and scale web applications, REST APIs, and backend services without managing servers.\n\nFeatures:\n1. Auto Scaling \u2014 automatically increases/decreases instances based on traffic\n2. High Availability \u2014 Azure manages uptime and infrastructure reliability\n3. CI/CD Integration \u2014 integrates with GitHub, Azure DevOps, Jenkins for automatic deployments\n4. Custom Domains & SSL \u2014 supports custom domains and HTTPS/SSL certificates\n5. Deployment Slots \u2014 Dev, Staging, Production slots for safer deployments"}, {"id": 9, "num": 10, "title": "What is Azure Storage Account?", "answer": "An Azure Storage Account provides a unique namespace to store and manage data in the cloud. It's a container for Azure storage services: Blob Storage, File Storage, Queue Storage, and Table Storage.\n\nWhy we use it: to store files, images, videos, backups, logs, application data, and messages/queues with high availability and scalability.\n\nTypes of storage services:\n1. Blob Storage \u2014 images, videos, documents, large unstructured data. Example: uploading profile pictures in a Spring Boot application.\n2. File Storage \u2014 shared file storage accessible via the SMB protocol. Example: shared folders between applications.\n3. Queue Storage \u2014 messages between applications/services. Example: microservice communication.\n4. Table Storage \u2014 NoSQL key-value storage for structured data. Example: large-scale metadata storage."}, {"id": 10, "num": 11, "title": "What is Azure CDN?", "answer": "Azure CDN (Content Delivery Network) delivers web content to users faster by caching content at geographically distributed edge locations.\n\nWhy we use it: when users access content from a far-away server, loading is slower. Azure CDN stores cached copies closer to users, reducing latency and improving performance.\n\nExample:\nYour application server is hosted in Central India. A user from Europe requests an image.\n- Without CDN: the image comes directly from India -> slower\n- With CDN: the image is cached on a Europe edge server -> faster"}, {"id": 11, "num": 13, "title": "What is Azure Load Balancer?", "answer": "Azure Load Balancer distributes incoming network traffic across multiple servers or virtual machines. It improves availability, increases scalability, and prevents server overload.\n\nTypes:\n1. Public Load Balancer \u2014 for internet-facing applications. Example: public website, public APIs.\n2. Internal Load Balancer \u2014 for internal/private traffic inside a network. Example: backend microservices, internal applications."}, {"id": 12, "num": 14, "title": "Difference between Load Balancer and Application Gateway?", "answer": "1. Azure Load Balancer\nWorks at Layer 4 (Transport Layer). Distributes traffic based on IP address and TCP/UDP ports. Does not understand URLs, HTTP headers, or cookies.\nUse cases: balancing traffic between VMs, database servers.\n\n2. Azure Application Gateway\nWorks at Layer 7 (Application Layer). Understands HTTP, HTTPS, URLs, headers, and cookies, so it can make routing decisions based on application-level data.\n\nExample flow \u2014 Load Balancer:\nUsers -> Azure Load Balancer -> VM1 / VM2 / VM3 (each running the Spring Boot app)\nIf 300 users send requests: 100 go to VM1, 100 to VM2, 100 to VM3.\n\nExample flow \u2014 Application Gateway (routes by URL path):\nUsers -> Application Gateway\n  /api/*    -> Backend Service\n  /admin/*  -> Admin Service\n  /images/* -> Image Service"}, {"id": 13, "num": 15, "title": "What is Azure Virtual Network (VNet)?", "answer": "Azure Virtual Network (VNet) \u2014 think of it as the internal connection linking an application to its database.\n\nVNet is a networking service that lets Azure resources communicate securely with each other, the internet, and on-premises networks. It's essentially a private network in the cloud.\n\nWhy we use it: secure communication between resources, isolating applications, controlling traffic flow, and connecting cloud with on-premise systems.\n\nKey components:\n1. Subnet \u2014 divides a VNet into smaller networks, e.g. an app subnet and a database subnet.\n2. IP Address Range \u2014 VNet uses private IP ranges like 10.0.0.0/16.\n3. Network Security Group (NSG) \u2014 acts like a firewall controlling incoming/outgoing traffic.\n4. Route Tables \u2014 control network routing paths."}, {"id": 14, "num": 16, "title": "What is Azure Functions?", "answer": "Azure Functions \u2014 think of it like an online IDE for small pieces of code.\n\nAzure Functions is a serverless compute service that lets you run small pieces of code (functions) without managing servers or infrastructure. You write the business logic; Azure handles server provisioning, scaling, monitoring, and availability.\n\nCommon triggers:\n- HTTP Trigger \u2014 REST API request\n- Timer Trigger \u2014 run every night at 12 AM\n- Blob Trigger \u2014 file uploaded to storage\n- Service Bus Trigger \u2014 message arrives in a queue\n- Event Grid Trigger \u2014 react to Azure events"}, {"id": 15, "num": 17, "title": "Difference between Azure Functions and Logic Apps?", "answer": "Azure Logic Apps is a serverless workflow automation service used to automate tasks, integrate systems, and connect different applications/services together \u2014 mostly using a low-code/no-code visual designer.\n\nReal-world example:\n1. Customer uploads a file\n2. Save file to Blob Storage\n3. Send email notification\n4. Create database entry\n5. Notify Teams channel\n\nInstead of writing backend code for all of this, you design the workflow visually in Logic Apps.\n\nIn short: Azure Functions is for writing custom code triggered by events; Logic Apps is for visually orchestrating workflows across services."}, {"id": 16, "num": 18, "title": "What are triggers and bindings in Azure Functions?", "answer": "Triggers and bindings connect your function to external services without writing a lot of boilerplate code.\n\nTrigger\nWhat starts or executes the function \u2014 \"why should this function run?\" Every Azure Function must have exactly one trigger.\n\nBinding\nAutomatically connects your function to another service \u2014 Blob Storage, Service Bus, Cosmos DB, Queue Storage, Event Hub \u2014 without writing full SDK integration code manually.\n\nTypes of bindings:\n- Input Binding \u2014 read data\n- Output Binding \u2014 write/send data"}, {"id": 17, "num": 19, "title": "What is Azure Service Bus?", "answer": "Azure Service Bus is a cloud-based message broker used for communication between applications, microservices, and distributed systems. It lets different services communicate asynchronously using messages.\n\nWhy we need it: in microservices, services should not depend on each other being always online \u2014 Service Bus decouples them via messaging."}, {"id": 18, "num": 20, "title": "Difference between Queue Storage and Service Bus?", "answer": "Both Azure Queue Storage and Azure Service Bus are messaging services, but they target different levels of complexity and reliability.\n\nQueue Storage\nA lightweight queue service inside Azure Storage. Best for background jobs, simple async processing, small applications, and basic microservice communication.\n\nService Bus\nA more advanced, enterprise-grade message broker (see Q19) \u2014 suited for complex messaging patterns, guaranteed ordering, and richer features than plain Queue Storage."}, {"id": 19, "num": 21, "title": "What is Event Grid?", "answer": "Azure Event Grid is a fully managed event routing service used to build event-driven architectures in Azure. It lets services and applications react automatically when events happen.\n\nExample flow:\nFile upload in Blob Storage -> Event Grid detects the event -> triggers an Azure Function, sends a notification, etc."}, {"id": 20, "num": 22, "title": "What is Event Hub?", "answer": "Azure Event Hubs is a high-throughput event streaming platform used to collect, ingest, and process millions of events or telemetry data in real time.\n\nDesigned for: big data streaming, telemetry ingestion, log collection, IoT data, and real-time analytics."}, {"id": 21, "num": 23, "title": "Difference between Event Hub and Kafka?", "answer": "Azure Event Hubs and Apache Kafka are both used for high-throughput event streaming and are conceptually very similar.\n\nThe main difference: Event Hubs is a fully managed Azure cloud service, while Kafka is an open-source distributed streaming platform you typically manage yourself (or via a managed Kafka offering)."}, {"id": 22, "num": 24, "title": "What is Azure API Management?", "answer": "Azure API Management is an API gateway service that helps organizations securely expose and manage APIs \u2014 including publishing, securing, versioning, throttling, and monitoring them."}, {"id": 23, "num": 25, "title": "How do you secure APIs in Azure?", "answer": "APIs in Azure are commonly secured using:\n1. Azure AD authentication\n2. JWT tokens\n3. Azure API Management policies\n4. HTTPS\n5. Managed Identity\n6. Azure Key Vault for secret management"}, {"id": 24, "num": 26, "title": "What is Managed Identity in Azure?", "answer": "Managed Identity provides an automatically managed identity for Azure resources so they can securely access other Azure services.\n\nWhy we need it: normally applications store client secrets, passwords, and connection credentials \u2014 which is risky because secrets can leak. Managed Identity removes this need.\n\nFlow:\nAzure automatically gives an identity to the app\n  -> App requests a token\n  -> Azure AD validates the identity\n  -> Access granted"}, {"id": 25, "num": 27, "title": "What is Azure Key Vault?", "answer": "Azure Key Vault is a secure Azure service used to centrally and securely store and manage secrets, passwords, API keys, certificates, and encryption keys.\n\nWhy we need it: without Key Vault, developers may store secrets in application.properties, environment variables, source code, or config files \u2014 all of which are insecure places to keep sensitive data."}, {"id": 26, "num": 29, "title": "What is Cosmos DB?", "answer": "Azure Cosmos DB is a fully managed, globally distributed NoSQL database service that provides high scalability, low latency, and multiple consistency models for modern cloud applications.\n\nTraditional relational databases can struggle with huge traffic, global users, massive scaling, and real-time applications \u2014 Cosmos DB is designed to solve these problems."}, {"id": 27, "num": 30, "title": "Difference between SQL Database and Cosmos DB?", "answer": "Azure SQL Database is a relational database service optimized for structured transactional workloads.\n\nAzure Cosmos DB is a globally distributed NoSQL database optimized for massive scalability, flexible schemas, and low-latency access."}, {"id": 28, "num": 31, "title": "What consistency levels are available in Cosmos DB?", "answer": "1. Strong Consistency\nEvery read gets the latest committed write immediately (write -> immediately visible everywhere).\nAdvantages: most accurate data.\nDisadvantages: higher latency, lower availability globally.\nUse cases: banking, financial systems.\n\n2. Bounded Staleness\nReads may lag behind writes, but only by a specific time or a specific number of versions (e.g. data can be at most 5 seconds old).\nUse cases: inventory systems, order tracking.\n\n3. Session Consistency (most common)\nA user always sees their own latest writes (user writes data -> same user reads latest data); other users may briefly see slightly older data.\nAdvantages: good balance of performance, scalability, and consistency.\nUse cases: web applications, user profiles, shopping carts.\n\n4. Consistent Prefix\nReads never see out-of-order writes \u2014 if writes happen A -> B -> C, you will never see A -> C, but you may temporarily miss the latest updates.\nUse cases: event processing, logging systems.\n\n5. Eventual Consistency\nEventually all replicas become consistent, with no guarantee of immediate consistency \u2014 data syncs eventually.\nAdvantages: lowest latency, highest throughput.\nUse cases: social media feeds, analytics, recommendations."}, {"id": 29, "num": 32, "title": "What is Azure Redis Cache?", "answer": "Azure Redis Cache is an in-memory cache service that improves application performance by storing frequently used data in RAM.\n\nWhy we need it: repeated database queries can be slow.\n- Without cache: User Request -> Database Query -> Response\n- With Redis Cache: User Request -> Redis Cache -> (if data exists, return immediately; otherwise Database -> Cache -> User)\n\n\"In-memory\" means the data is stored in the computer's RAM instead of on a hard disk or SSD."}, {"id": 30, "num": 33, "title": "Why do we use Redis in microservices?", "answer": "Redis is widely used in microservices because it provides very fast data access, distributed caching, shared temporary storage, and better application performance.\n\nMain reason: in microservices, many services repeatedly access database data, sessions, tokens, and frequently used objects. Querying the database every time is slow and expensive \u2014 Redis stores frequently used data in memory to avoid that cost."}, {"id": 31, "num": 34, "title": "What is Azure Monitor?", "answer": "Azure Monitor helps monitor the health, performance, availability, and usage of applications and infrastructure in Azure."}, {"id": 32, "num": 35, "title": "What is Application Insights?", "answer": "Azure Application Insights is an Application Performance Monitoring (APM) service used to monitor the performance, availability, and behavior of applications. It's part of Azure Monitor.\n\nReal-world example: your Spring Boot microservices are deployed on Azure Kubernetes Service and Azure App Service. Application Insights can show which API is slow, which microservice failed, database query duration, and end-to-end request tracing."}, {"id": 33, "num": 36, "title": "What is CI/CD?", "answer": "CI/CD is an automated pipeline that helps developers integrate code changes frequently and deploy applications quickly and reliably.\n\nWith CI/CD: Code Push -> Automatic Build -> Automatic Testing -> Automatic Deployment\n\n1. Continuous Integration (CI)\nDevelopers frequently merge code into a shared repository. Whenever code is pushed, the build starts automatically, tests run automatically, and code quality checks happen.\nGoal: detect issues early \u2014 build failures, test failures, integration problems.\n\n2. Continuous Delivery (CD)\nAfter a successful build/test, the application becomes ready for deployment (deployment may require approval).\n\nReal-world example (Spring Boot): push code to GitHub -> pipeline automatically builds the Spring Boot app, runs unit tests, builds a Docker image, pushes the image to Azure Container Registry, and deploys to Azure Kubernetes Service."}, {"id": 34, "num": 37, "title": "What is Azure DevOps?", "answer": "Azure DevOps is a cloud-based DevOps platform from Microsoft used to manage the complete software development lifecycle. It provides tools for source code management, CI/CD pipelines, project tracking, testing, and artifact management.\n\nIn short: Azure DevOps helps teams plan, build, test, and deploy applications efficiently."}, {"id": 35, "num": 38, "title": "Difference between Azure DevOps and Jenkins?", "answer": "Jenkins is an open-source CI/CD automation server focused mainly on build and deployment pipelines.\n\nAzure DevOps is a complete DevOps platform that provides integrated services for source control, CI/CD, testing, project management, and artifact management."}, {"id": 36, "num": 39, "title": "What is a build pipeline?", "answer": "A build pipeline is an automated process that compiles source code, runs tests, validates code, and creates deployable artifacts."}, {"id": 37, "num": 40, "title": "What is a release pipeline?", "answer": "A release pipeline is an automated process used to deploy an application to different environments such as Development, Test, Staging, and Production."}, {"id": 38, "num": 41, "title": "How do you deploy a Spring Boot application to Azure?", "answer": "1. Deploy to Azure App Service (simplest)\nBest for small/medium applications, easy deployment, minimal infrastructure management.\n\nDeployment flow:\nSpring Boot App -> Maven Build -> JAR File -> Azure App Service\n\nSteps:\nStep 1: Build the JAR\nmvn clean package\n\nStep 2: Create the App Service\nCreate an App Service Plan and a Web App.\n\nStep 3: Deploy\nUsing the Azure Portal, Azure CLI, the Maven Plugin, or GitHub Actions.\n\nFull deployment checklist:\n1. Create the Spring Boot application\n2. Build the JAR using Maven\n3. Login to Azure using Azure CLI\n4. Create a Resource Group\n5. Create an App Service Plan\n6. Create the Azure App Service Web App\n7. Deploy the Spring Boot JAR to App Service\n8. Configure environment variables/application settings if needed\n9. Monitor logs and verify deployment\n10. Access the application using the App Service URL"}];
+const STORE_KEY = "azure-interview-tracker-v1";
+let state = JSON.parse(localStorage.getItem(STORE_KEY) || "{}");
+let currentFilter = "all";
+let searchTerm = "";
+
+function getState(id) {
+  return state[id] || {reviewed:false, important:false, open:false};
+}
+function save() {
+  localStorage.setItem(STORE_KEY, JSON.stringify(state));
+}
+function esc(str) {
+  return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+}
+function toast(msg) {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(window.__toast);
+  window.__toast = setTimeout(() => el.classList.remove("show"), 1600);
+}
+
+function updateStats() {
+  const total = DATA.length;
+  const reviewed = DATA.filter(x => getState(x.id).reviewed).length;
+  const starred = DATA.filter(x => getState(x.id).important).length;
+  const pct = total ? Math.round(reviewed / total * 100) : 0;
+  document.getElementById("stat-total").textContent = total;
+  document.getElementById("stat-done").textContent = reviewed;
+  document.getElementById("stat-remaining").textContent = total - reviewed;
+  document.getElementById("stat-star").textContent = starred;
+  document.getElementById("pct-label").textContent = pct + "%";
+  document.getElementById("progress-fill").style.width = pct + "%";
+}
+
+function render() {
+  const main = document.getElementById("main");
+  const q = searchTerm.toLowerCase();
+
+  const visible = DATA.filter(item => {
+    const s = getState(item.id);
+    const matchesSearch = !q || (item.title + " " + item.answer).toLowerCase().includes(q);
+    const matchesFilter =
+      currentFilter === "all" ||
+      (currentFilter === "important" && s.important) ||
+      (currentFilter === "unreviewed" && !s.reviewed) ||
+      (currentFilter === "reviewed" && s.reviewed);
+    return matchesSearch && matchesFilter;
+  });
+
+  if (!visible.length) {
+    main.innerHTML = '<div class="empty-state">No questions match your search or filter.</div>';
+    updateStats();
+    return;
+  }
+
+  main.innerHTML = visible.map(item => {
+    const s = getState(item.id);
+    return `
+      <section class="card ${s.reviewed ? "reviewed" : ""} ${s.important ? "important" : ""} ${s.open ? "open" : ""}" data-id="${item.id}">
+        <div class="q-row">
+          <input class="check" type="checkbox" ${s.reviewed ? "checked" : ""} aria-label="Mark reviewed">
+          <div class="q-num">Q${item.num}</div>
+          <div class="q-text">
+            ${esc(item.title)}
+            <div class="tag">${s.reviewed ? "✓ Reviewed" : "Revision due"}${s.important ? " · ★ Important" : ""}</div>
+          </div>
+          <button class="star-btn ${s.important ? "on" : ""}" title="Mark important" aria-label="Mark important">★</button>
+          <span class="chevron" aria-hidden="true">▶</span>
+        </div>
+        <div class="answer">${esc(item.answer)}</div>
+      </section>`;
+  }).join("");
+
+  [...main.children].forEach(card => {
+    const id = Number(card.dataset.id);
+    const qRow = card.querySelector(".q-row");
+    const check = card.querySelector(".check");
+    const star = card.querySelector(".star-btn");
+
+    qRow.addEventListener("click", e => {
+      if (e.target.closest(".check,.star-btn")) return;
+      state[id] = {...getState(id), open: !getState(id).open};
+      save();
+      render();
+    });
+
+    check.addEventListener("click", e => e.stopPropagation());
+    check.addEventListener("change", e => {
+      state[id] = {...getState(id), reviewed: e.target.checked};
+      save();
+      render();
+      toast(e.target.checked ? "Marked as reviewed" : "Moved to revision due");
+    });
+
+    star.addEventListener("click", e => {
+      e.stopPropagation();
+      state[id] = {...getState(id), important: !getState(id).important};
+      save();
+      render();
+      toast(getState(id).important ? "Marked important" : "Removed important flag");
+    });
+  });
+
+  updateStats();
+}
+
+document.getElementById("search").addEventListener("input", e => {
+  searchTerm = e.target.value;
+  render();
+});
+
+document.querySelectorAll(".filter").forEach(btn => btn.addEventListener("click", () => {
+  document.querySelectorAll(".filter").forEach(x => x.classList.remove("active"));
+  btn.classList.add("active");
+  currentFilter = btn.dataset.filter;
+  render();
+}));
+
+document.getElementById("expand-all").addEventListener("click", () => {
+  DATA.forEach(x => state[x.id] = {...getState(x.id), open:true});
+  save(); render(); toast("All answers expanded");
+});
+document.getElementById("collapse-all").addEventListener("click", () => {
+  DATA.forEach(x => state[x.id] = {...getState(x.id), open:false});
+  save(); render(); toast("All answers collapsed");
+});
+document.getElementById("reset-btn").addEventListener("click", () => {
+  if (confirm("Reset all reviewed and important progress?")) {
+    state = {};
+    save(); render(); toast("Progress reset");
+  }
+});
+
+const topBtn = document.getElementById("top-btn");
+window.addEventListener("scroll", () => topBtn.classList.toggle("show", window.scrollY > 450));
+topBtn.addEventListener("click", () => window.scrollTo({top:0,behavior:"smooth"}));
+
+document.addEventListener("keydown", e => {
+  if (e.key === "/" && document.activeElement.tagName !== "INPUT") {
+    e.preventDefault(); document.getElementById("search").focus();
+  }
+  if (e.key.toLowerCase() === "e" && document.activeElement.tagName !== "INPUT") {
+    document.getElementById("expand-all").click();
+  }
+  if (e.key.toLowerCase() === "c" && document.activeElement.tagName !== "INPUT") {
+    document.getElementById("collapse-all").click();
+  }
+});
+
+render();
+</script>
+</body>
+</html>
