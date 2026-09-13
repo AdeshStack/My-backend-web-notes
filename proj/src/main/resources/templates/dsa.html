@@ -1,0 +1,2335 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Big 4 DSA Tracker — Java Backend</title>
+<style>
+:root{--bg:#eef7ff;--card:#ffffff;--text:#10233f;--muted:#607089;--line:#dbe8f5;--accent:#1976ff;--accent2:#00b894;--blue:#1976ff;--green:#00b894;--cyan:#00c2ff;--purple:#7657ff;--orange:#ff9f43;--pink:#ff5fa2;--shadow:0 10px 30px rgba(25,118,255,.10)}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:#f7fafc;color:var(--text)}
+header{position:sticky;top:0;z-index:10;background:#ffffff;border-bottom:1px solid #e2e8f0;box-shadow:0 2px 8px rgba(16,35,63,.04)}
+.wrap{max-width:1250px;margin:auto;padding:18px}
+h1{margin:0;font-size:28px} .sub{color:var(--muted);margin:5px 0 16px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stat{background:linear-gradient(145deg,#fff,#f5fbff);border:1px solid var(--line);border-radius:14px;padding:12px;box-shadow:var(--shadow);position:relative;overflow:hidden}.stat:after{content:'';position:absolute;inset:auto -20px -28px auto;width:80px;height:80px;border-radius:50%;background:rgba(25,118,255,.08)}
+.stat b{display:block;font-size:22px}.stat span{font-size:12px;color:var(--muted)}
+.progress{height:14px;background:#dfeaf5;border-radius:99px;overflow:hidden;margin-top:12px;box-shadow:inset 0 1px 3px rgba(0,0,0,.08)}#bar{height:100%;width:0;background:linear-gradient(90deg,#1976ff,#00c2ff,#00b894);transition:.45s;box-shadow:0 0 12px rgba(0,184,148,.35)}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}select,input[type=search],button.clear{border:1px solid #cfe0ef;background:#fff;border-radius:10px;padding:10px 12px;color:var(--text);box-shadow:0 3px 10px rgba(25,118,255,.05)}select:focus,input[type=search]:focus{outline:2px solid rgba(25,118,255,.18);border-color:var(--blue)}
+main{max-width:1250px;margin:auto;padding:18px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.card{background:linear-gradient(145deg,#fff,#fafdff);border:1px solid var(--line);border-radius:16px;padding:15px;box-shadow:var(--shadow);transition:.22s;position:relative;overflow:hidden}.card:before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--blue),var(--green));opacity:.8}.card:hover{transform:translateY(-4px);box-shadow:0 14px 32px rgba(25,118,255,.15);border-color:#b9d8f5}
+.card.done{border-color:#8ee4cd;background:linear-gradient(180deg,#fff,#effff9)}.card.done:before{background:linear-gradient(180deg,#00b894,#00d2a8)}.cardtop{display:flex;justify-content:space-between;align-items:center}
+.badge,.level{display:inline-block;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:700;margin-right:5px}
+.badge{background:linear-gradient(135deg,#e5f0ff,#e7fff7);color:#1766c2;border:1px solid #cfe4f7}.easy{background:#dcfff1;color:#07845f;border:1px solid #b9f0dd}.medium{background:#fff0d6;color:#a65c00;border:1px solid #ffd99f}
+.num{font-size:11px;color:#9aa3b5}h3{font-size:16px;line-height:1.35;margin:13px 0}
+.actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px}.actions a{margin-left:auto;text-decoration:none;color:#5a4bd1;font-weight:700}
+.rating{display:flex;align-items:center;gap:3px;margin-top:12px;font-size:12px;color:var(--muted)}.rating button{border:0;background:none;color:#cbd1dd;font-size:20px;padding:0;cursor:pointer}.rating button.active{color:#ffb703;text-shadow:0 0 8px rgba(255,183,3,.25)}.rating button:hover{color:#ffb703;transform:scale(1.12)}.ratingText{margin-left:5px}
+.empty{text-align:center;color:var(--muted);padding:40px}
+@media(max-width:700px){.stats{grid-template-columns:repeat(2,1fr)}h1{font-size:22px}.actions a{margin-left:0}}
+</style>
+</head>
+<body>
+<style>
+.gtabs{position:sticky;top:0;z-index:999;display:flex;gap:2px;background:#0f1420;padding:6px 10px;overflow-x:auto;white-space:nowrap;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+.gtabs a{color:#aab4c5;text-decoration:none;font-size:12.5px;font-weight:600;padding:7px 12px;border-radius:8px;flex:0 0 auto}
+.gtabs a:hover{background:#1c2333;color:#fff}
+.gtabs a.active{background:#2f6fed;color:#fff}
+header{top:38px !important}
+</style>
+<nav class="gtabs" id="globalTabs">
+<a href="/" data-path="/">Home</a>
+<a href="/dsa" data-path="/dsa">DSA</a>
+<a href="/dbms" data-path="/dbms">DBMS</a>
+<a href="/azure" data-path="/azure">Azure</a>
+<a href="/java" data-path="/java">Java</a>
+<a href="/docker" data-path="/docker">Docker / CI-CD</a>
+<a href="/misc" data-path="/misc">Misc</a>
+</nav>
+<script>
+(function(){
+  var here = window.location.pathname.replace(/\/$/, "") || "/";
+  document.querySelectorAll("#globalTabs a").forEach(function(a){
+    var p = a.getAttribute("data-path");
+    if (p === here || (p !== "/" && here.indexOf(p) === 0)) a.classList.add("active");
+  });
+})();
+</script>
+
+<img src="/img/banner.png" alt="Code and Cricket Jams banner" style="display:block;width:100%;max-height:220px;object-fit:cover;">
+
+
+<header><div class="wrap">
+<h1>🚀 Big 4 DSA Tracker</h1>
+<div class="sub">Java Backend • Easy → Medium • Pattern-based preparation • Progress saves automatically to MySQL</div>
+<div class="stats">
+<div class="stat"><b id="total">108</b><span>Total questions</span></div>
+<div class="stat"><b id="solvedCount">0</b><span>Solved</span></div>
+<div class="stat"><b id="revisionCount">0</b><span>Revision done</span></div>
+<div class="stat"><b id="percent">0%</b><span>Overall progress</span></div>
+</div>
+<div class="progress"><div id="bar"></div></div>
+<div class="controls">
+<select id="pattern"><option value="">All patterns</option><option>Arrays</option><option>Strings</option><option>HashMap / HashSet</option><option>Two Pointers</option><option>Sliding Window</option><option>Binary Search</option><option>Linked List</option><option>Stack / Queue</option><option>Recursion / Backtracking</option><option>Trees / BST</option><option>Heap / Priority Queue</option><option>Graph BFS / DFS</option><option>Greedy</option><option>Dynamic Programming</option></select>
+<select id="status"><option value="">All status</option><option value="unsolved">Unsolved</option><option value="solved">Solved</option><option value="revision">Revision done</option></select>
+<select id="level"><option value="">All starting levels</option><option>Easy</option><option>Medium</option></select>
+<input id="search" placeholder="Search question..." type="search"/>
+<button class="clear" id="reset">Reset all progress</button>
+</div>
+</div></header>
+<main><div class="grid" id="grid">
+<article class="card" data-id="1" data-level="Easy" data-pattern="Arrays" data-title="two sum">
+<div class="cardtop">
+<div>
+<span class="badge">Arrays</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#001</span>
+</div>
+<h3>Two Sum</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/two-sum/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="2" data-level="Easy" data-pattern="Arrays" data-title="best time to buy and sell stock">
+<div class="cardtop">
+<div>
+<span class="badge">Arrays</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#002</span>
+</div>
+<h3>Best Time to Buy and Sell Stock</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/best-time-to-buy-and-sell-stock/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="3" data-level="Easy" data-pattern="Arrays" data-title="contains duplicate">
+<div class="cardtop">
+<div>
+<span class="badge">Arrays</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#003</span>
+</div>
+<h3>Contains Duplicate</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/contains-duplicate/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="4" data-level="Medium" data-pattern="Arrays" data-title="maximum subarray">
+<div class="cardtop">
+<div>
+<span class="badge">Arrays</span>
+<span class="level medium">Medium</span>
+</div>
+<span class="num">#004</span>
+</div>
+<h3>Maximum Subarray</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/maximum-subarray/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="5" data-level="Easy" data-pattern="Arrays" data-title="move zeroes">
+<div class="cardtop">
+<div>
+<span class="badge">Arrays</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#005</span>
+</div>
+<h3>Move Zeroes</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/move-zeroes/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="6" data-level="Easy" data-pattern="Arrays" data-title="merge sorted array">
+<div class="cardtop">
+<div>
+<span class="badge">Arrays</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#006</span>
+</div>
+<h3>Merge Sorted Array</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/merge-sorted-array/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="7" data-level="Easy" data-pattern="Arrays" data-title="majority element">
+<div class="cardtop">
+<div>
+<span class="badge">Arrays</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#007</span>
+</div>
+<h3>Majority Element</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/majority-element/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="8" data-level="Medium" data-pattern="Arrays" data-title="product of array except self">
+<div class="cardtop">
+<div>
+<span class="badge">Arrays</span>
+<span class="level medium">Medium</span>
+</div>
+<span class="num">#008</span>
+</div>
+<h3>Product of Array Except Self</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/product-of-array-except-self/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="9" data-level="Easy" data-pattern="Arrays" data-title="missing number">
+<div class="cardtop">
+<div>
+<span class="badge">Arrays</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#009</span>
+</div>
+<h3>Missing Number</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/missing-number/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="10" data-level="Easy" data-pattern="Arrays" data-title="find pivot index">
+<div class="cardtop">
+<div>
+<span class="badge">Arrays</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#010</span>
+</div>
+<h3>Find Pivot Index</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/find-pivot-index/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="11" data-level="Easy" data-pattern="Arrays" data-title="subarray sum equals k">
+<div class="cardtop">
+<div>
+<span class="badge">Arrays</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#011</span>
+</div>
+<h3>Subarray Sum Equals K</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/subarray-sum-equals-k/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="12" data-level="Medium" data-pattern="Arrays" data-title="longest consecutive sequence">
+<div class="cardtop">
+<div>
+<span class="badge">Arrays</span>
+<span class="level medium">Medium</span>
+</div>
+<span class="num">#012</span>
+</div>
+<h3>Longest Consecutive Sequence</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/longest-consecutive-sequence/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="13" data-level="Easy" data-pattern="Strings" data-title="valid anagram">
+<div class="cardtop">
+<div>
+<span class="badge">Strings</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#013</span>
+</div>
+<h3>Valid Anagram</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/valid-anagram/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="14" data-level="Easy" data-pattern="Strings" data-title="valid palindrome">
+<div class="cardtop">
+<div>
+<span class="badge">Strings</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#014</span>
+</div>
+<h3>Valid Palindrome</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/valid-palindrome/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="15" data-level="Easy" data-pattern="Strings" data-title="longest common prefix">
+<div class="cardtop">
+<div>
+<span class="badge">Strings</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#015</span>
+</div>
+<h3>Longest Common Prefix</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/longest-common-prefix/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="16" data-level="Medium" data-pattern="Strings" data-title="reverse string">
+<div class="cardtop">
+<div>
+<span class="badge">Strings</span>
+<span class="level medium">Medium</span>
+</div>
+<span class="num">#016</span>
+</div>
+<h3>Reverse String</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/reverse-string/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="17" data-level="Easy" data-pattern="Strings" data-title="first unique character in a string">
+<div class="cardtop">
+<div>
+<span class="badge">Strings</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#017</span>
+</div>
+<h3>First Unique Character in a String</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/first-unique-character-in-a-string/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="18" data-level="Easy" data-pattern="Strings" data-title="isomorphic strings">
+<div class="cardtop">
+<div>
+<span class="badge">Strings</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#018</span>
+</div>
+<h3>Isomorphic Strings</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/isomorphic-strings/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="19" data-level="Easy" data-pattern="Strings" data-title="group anagrams">
+<div class="cardtop">
+<div>
+<span class="badge">Strings</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#019</span>
+</div>
+<h3>Group Anagrams</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/group-anagrams/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="20" data-level="Medium" data-pattern="Strings" data-title="longest palindromic substring">
+<div class="cardtop">
+<div>
+<span class="badge">Strings</span>
+<span class="level medium">Medium</span>
+</div>
+<span class="num">#020</span>
+</div>
+<h3>Longest Palindromic Substring</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/longest-palindromic-substring/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="21" data-level="Easy" data-pattern="Strings" data-title="string to integer (atoi)">
+<div class="cardtop">
+<div>
+<span class="badge">Strings</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#021</span>
+</div>
+<h3>String to Integer (atoi)</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/string-to-integer-atoi/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="22" data-level="Easy" data-pattern="Strings" data-title="longest common subsequence">
+<div class="cardtop">
+<div>
+<span class="badge">Strings</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#022</span>
+</div>
+<h3>Longest Common Subsequence</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/longest-common-subsequence/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="23" data-level="Easy" data-pattern="HashMap / HashSet" data-title="two sum">
+<div class="cardtop">
+<div>
+<span class="badge">HashMap / HashSet</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#023</span>
+</div>
+<h3>Two Sum</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/two-sum/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="24" data-level="Medium" data-pattern="HashMap / HashSet" data-title="contains duplicate ii">
+<div class="cardtop">
+<div>
+<span class="badge">HashMap / HashSet</span>
+<span class="level medium">Medium</span>
+</div>
+<span class="num">#024</span>
+</div>
+<h3>Contains Duplicate II</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/contains-duplicate-ii/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="25" data-level="Easy" data-pattern="HashMap / HashSet" data-title="intersection of two arrays">
+<div class="cardtop">
+<div>
+<span class="badge">HashMap / HashSet</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#025</span>
+</div>
+<h3>Intersection of Two Arrays</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/intersection-of-two-arrays/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="26" data-level="Easy" data-pattern="HashMap / HashSet" data-title="happy number">
+<div class="cardtop">
+<div>
+<span class="badge">HashMap / HashSet</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#026</span>
+</div>
+<h3>Happy Number</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/happy-number/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="27" data-level="Easy" data-pattern="HashMap / HashSet" data-title="top k frequent elements">
+<div class="cardtop">
+<div>
+<span class="badge">HashMap / HashSet</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#027</span>
+</div>
+<h3>Top K Frequent Elements</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/top-k-frequent-elements/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="28" data-level="Medium" data-pattern="HashMap / HashSet" data-title="sort characters by frequency">
+<div class="cardtop">
+<div>
+<span class="badge">HashMap / HashSet</span>
+<span class="level medium">Medium</span>
+</div>
+<span class="num">#028</span>
+</div>
+<h3>Sort Characters by Frequency</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/sort-characters-by-frequency/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="29" data-level="Easy" data-pattern="HashMap / HashSet" data-title="longest substring without repeating characters">
+<div class="cardtop">
+<div>
+<span class="badge">HashMap / HashSet</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#029</span>
+</div>
+<h3>Longest Substring Without Repeating Characters</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/longest-substring-without-repeating-characters/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="30" data-level="Easy" data-pattern="HashMap / HashSet" data-title="minimum window substring">
+<div class="cardtop">
+<div>
+<span class="badge">HashMap / HashSet</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#030</span>
+</div>
+<h3>Minimum Window Substring</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/minimum-window-substring/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="31" data-level="Easy" data-pattern="Two Pointers" data-title="valid palindrome">
+<div class="cardtop">
+<div>
+<span class="badge">Two Pointers</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#031</span>
+</div>
+<h3>Valid Palindrome</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/valid-palindrome/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="32" data-level="Medium" data-pattern="Two Pointers" data-title="two sum ii - input array is sorted">
+<div class="cardtop">
+<div>
+<span class="badge">Two Pointers</span>
+<span class="level medium">Medium</span>
+</div>
+<span class="num">#032</span>
+</div>
+<h3>Two Sum II - Input Array Is Sorted</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="33" data-level="Easy" data-pattern="Two Pointers" data-title="3sum">
+<div class="cardtop">
+<div>
+<span class="badge">Two Pointers</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#033</span>
+</div>
+<h3>3Sum</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/3sum/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="34" data-level="Easy" data-pattern="Two Pointers" data-title="container with most water">
+<div class="cardtop">
+<div>
+<span class="badge">Two Pointers</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#034</span>
+</div>
+<h3>Container With Most Water</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/container-with-most-water/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="35" data-level="Easy" data-pattern="Two Pointers" data-title="remove duplicates from sorted array">
+<div class="cardtop">
+<div>
+<span class="badge">Two Pointers</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#035</span>
+</div>
+<h3>Remove Duplicates from Sorted Array</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/remove-duplicates-from-sorted-array/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="36" data-level="Medium" data-pattern="Two Pointers" data-title="squares of a sorted array">
+<div class="cardtop">
+<div>
+<span class="badge">Two Pointers</span>
+<span class="level medium">Medium</span>
+</div>
+<span class="num">#036</span>
+</div>
+<h3>Squares of a Sorted Array</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/squares-of-a-sorted-array/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="37" data-level="Easy" data-pattern="Two Pointers" data-title="backspace string compare">
+<div class="cardtop">
+<div>
+<span class="badge">Two Pointers</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#037</span>
+</div>
+<h3>Backspace String Compare</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/backspace-string-compare/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="38" data-level="Easy" data-pattern="Sliding Window" data-title="maximum average subarray i">
+<div class="cardtop">
+<div>
+<span class="badge">Sliding Window</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#038</span>
+</div>
+<h3>Maximum Average Subarray I</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/maximum-average-subarray-i/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="39" data-level="Easy" data-pattern="Sliding Window" data-title="longest substring without repeating characters">
+<div class="cardtop">
+<div>
+<span class="badge">Sliding Window</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#039</span>
+</div>
+<h3>Longest Substring Without Repeating Characters</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/longest-substring-without-repeating-characters/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="40" data-level="Medium" data-pattern="Sliding Window" data-title="longest repeating character replacement">
+<div class="cardtop">
+<div>
+<span class="badge">Sliding Window</span>
+<span class="level medium">Medium</span>
+</div>
+<span class="num">#040</span>
+</div>
+<h3>Longest Repeating Character Replacement</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/longest-repeating-character-replacement/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="41" data-level="Easy" data-pattern="Sliding Window" data-title="permutation in string">
+<div class="cardtop">
+<div>
+<span class="badge">Sliding Window</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#041</span>
+</div>
+<h3>Permutation in String</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/permutation-in-string/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="42" data-level="Easy" data-pattern="Sliding Window" data-title="minimum size subarray sum">
+<div class="cardtop">
+<div>
+<span class="badge">Sliding Window</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#042</span>
+</div>
+<h3>Minimum Size Subarray Sum</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/minimum-size-subarray-sum/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="43" data-level="Easy" data-pattern="Sliding Window" data-title="fruit into baskets">
+<div class="cardtop">
+<div>
+<span class="badge">Sliding Window</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#043</span>
+</div>
+<h3>Fruit Into Baskets</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/fruit-into-baskets/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="44" data-level="Medium" data-pattern="Sliding Window" data-title="minimum window substring">
+<div class="cardtop">
+<div>
+<span class="badge">Sliding Window</span>
+<span class="level medium">Medium</span>
+</div>
+<span class="num">#044</span>
+</div>
+<h3>Minimum Window Substring</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/minimum-window-substring/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="45" data-level="Easy" data-pattern="Binary Search" data-title="binary search">
+<div class="cardtop">
+<div>
+<span class="badge">Binary Search</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#045</span>
+</div>
+<h3>Binary Search</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/binary-search/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="46" data-level="Easy" data-pattern="Binary Search" data-title="search insert position">
+<div class="cardtop">
+<div>
+<span class="badge">Binary Search</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#046</span>
+</div>
+<h3>Search Insert Position</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/search-insert-position/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="47" data-level="Easy" data-pattern="Binary Search" data-title="first bad version">
+<div class="cardtop">
+<div>
+<span class="badge">Binary Search</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#047</span>
+</div>
+<h3>First Bad Version</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/first-bad-version/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="48" data-level="Medium" data-pattern="Binary Search" data-title="search in rotated sorted array">
+<div class="cardtop">
+<div>
+<span class="badge">Binary Search</span>
+<span class="level medium">Medium</span>
+</div>
+<span class="num">#048</span>
+</div>
+<h3>Search in Rotated Sorted Array</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/search-in-rotated-sorted-array/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="49" data-level="Easy" data-pattern="Binary Search" data-title="find minimum in rotated sorted array">
+<div class="cardtop">
+<div>
+<span class="badge">Binary Search</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#049</span>
+</div>
+<h3>Find Minimum in Rotated Sorted Array</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="50" data-level="Easy" data-pattern="Binary Search" data-title="find first and last position of element in sorted array">
+<div class="cardtop">
+<div>
+<span class="badge">Binary Search</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#050</span>
+</div>
+<h3>Find First and Last Position of Element in Sorted Array</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="51" data-level="Easy" data-pattern="Binary Search" data-title="sqrt(x)">
+<div class="cardtop">
+<div>
+<span class="badge">Binary Search</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#051</span>
+</div>
+<h3>Sqrt(x)</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/sqrtx/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="52" data-level="Medium" data-pattern="Binary Search" data-title="koko eating bananas">
+<div class="cardtop">
+<div>
+<span class="badge">Binary Search</span>
+<span class="level medium">Medium</span>
+</div>
+<span class="num">#052</span>
+</div>
+<h3>Koko Eating Bananas</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/koko-eating-bananas/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="53" data-level="Easy" data-pattern="Linked List" data-title="reverse linked list">
+<div class="cardtop">
+<div>
+<span class="badge">Linked List</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#053</span>
+</div>
+<h3>Reverse Linked List</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/reverse-linked-list/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="54" data-level="Easy" data-pattern="Linked List" data-title="middle of the linked list">
+<div class="cardtop">
+<div>
+<span class="badge">Linked List</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#054</span>
+</div>
+<h3>Middle of the Linked List</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/middle-of-the-linked-list/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="55" data-level="Easy" data-pattern="Linked List" data-title="merge two sorted lists">
+<div class="cardtop">
+<div>
+<span class="badge">Linked List</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#055</span>
+</div>
+<h3>Merge Two Sorted Lists</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/merge-two-sorted-lists/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="56" data-level="Medium" data-pattern="Linked List" data-title="linked list cycle">
+<div class="cardtop">
+<div>
+<span class="badge">Linked List</span>
+<span class="level medium">Medium</span>
+</div>
+<span class="num">#056</span>
+</div>
+<h3>Linked List Cycle</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/linked-list-cycle/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="57" data-level="Easy" data-pattern="Linked List" data-title="remove duplicates from sorted list">
+<div class="cardtop">
+<div>
+<span class="badge">Linked List</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#057</span>
+</div>
+<h3>Remove Duplicates from Sorted List</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/remove-duplicates-from-sorted-list/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="58" data-level="Easy" data-pattern="Linked List" data-title="remove nth node from end of list">
+<div class="cardtop">
+<div>
+<span class="badge">Linked List</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#058</span>
+</div>
+<h3>Remove Nth Node From End of List</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/remove-nth-node-from-end-of-list/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="59" data-level="Easy" data-pattern="Linked List" data-title="palindrome linked list">
+<div class="cardtop">
+<div>
+<span class="badge">Linked List</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#059</span>
+</div>
+<h3>Palindrome Linked List</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/palindrome-linked-list/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="60" data-level="Medium" data-pattern="Linked List" data-title="add two numbers">
+<div class="cardtop">
+<div>
+<span class="badge">Linked List</span>
+<span class="level medium">Medium</span>
+</div>
+<span class="num">#060</span>
+</div>
+<h3>Add Two Numbers</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/add-two-numbers/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="61" data-level="Easy" data-pattern="Stack / Queue" data-title="valid parentheses">
+<div class="cardtop">
+<div>
+<span class="badge">Stack / Queue</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#061</span>
+</div>
+<h3>Valid Parentheses</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/valid-parentheses/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="62" data-level="Easy" data-pattern="Stack / Queue" data-title="min stack">
+<div class="cardtop">
+<div>
+<span class="badge">Stack / Queue</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#062</span>
+</div>
+<h3>Min Stack</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/min-stack/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="63" data-level="Easy" data-pattern="Stack / Queue" data-title="implement queue using stacks">
+<div class="cardtop">
+<div>
+<span class="badge">Stack / Queue</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#063</span>
+</div>
+<h3>Implement Queue using Stacks</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/implement-queue-using-stacks/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="64" data-level="Medium" data-pattern="Stack / Queue" data-title="implement stack using queues">
+<div class="cardtop">
+<div>
+<span class="badge">Stack / Queue</span>
+<span class="level medium">Medium</span>
+</div>
+<span class="num">#064</span>
+</div>
+<h3>Implement Stack using Queues</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/implement-stack-using-queues/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="65" data-level="Easy" data-pattern="Stack / Queue" data-title="daily temperatures">
+<div class="cardtop">
+<div>
+<span class="badge">Stack / Queue</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#065</span>
+</div>
+<h3>Daily Temperatures</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/daily-temperatures/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="66" data-level="Easy" data-pattern="Stack / Queue" data-title="next greater element i">
+<div class="cardtop">
+<div>
+<span class="badge">Stack / Queue</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#066</span>
+</div>
+<h3>Next Greater Element I</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/next-greater-element-i/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="67" data-level="Easy" data-pattern="Stack / Queue" data-title="evaluate reverse polish notation">
+<div class="cardtop">
+<div>
+<span class="badge">Stack / Queue</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#067</span>
+</div>
+<h3>Evaluate Reverse Polish Notation</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/evaluate-reverse-polish-notation/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="68" data-level="Medium" data-pattern="Stack / Queue" data-title="sliding window maximum">
+<div class="cardtop">
+<div>
+<span class="badge">Stack / Queue</span>
+<span class="level medium">Medium</span>
+</div>
+<span class="num">#068</span>
+</div>
+<h3>Sliding Window Maximum</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/sliding-window-maximum/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="69" data-level="Easy" data-pattern="Recursion / Backtracking" data-title="subsets">
+<div class="cardtop">
+<div>
+<span class="badge">Recursion / Backtracking</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#069</span>
+</div>
+<h3>Subsets</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/subsets/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="70" data-level="Easy" data-pattern="Recursion / Backtracking" data-title="permutations">
+<div class="cardtop">
+<div>
+<span class="badge">Recursion / Backtracking</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#070</span>
+</div>
+<h3>Permutations</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/permutations/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="71" data-level="Easy" data-pattern="Recursion / Backtracking" data-title="combination sum">
+<div class="cardtop">
+<div>
+<span class="badge">Recursion / Backtracking</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#071</span>
+</div>
+<h3>Combination Sum</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/combination-sum/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="72" data-level="Medium" data-pattern="Recursion / Backtracking" data-title="letter combinations of a phone number">
+<div class="cardtop">
+<div>
+<span class="badge">Recursion / Backtracking</span>
+<span class="level medium">Medium</span>
+</div>
+<span class="num">#072</span>
+</div>
+<h3>Letter Combinations of a Phone Number</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/letter-combinations-of-a-phone-number/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="73" data-level="Easy" data-pattern="Recursion / Backtracking" data-title="generate parentheses">
+<div class="cardtop">
+<div>
+<span class="badge">Recursion / Backtracking</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#073</span>
+</div>
+<h3>Generate Parentheses</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/generate-parentheses/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="74" data-level="Easy" data-pattern="Recursion / Backtracking" data-title="word search">
+<div class="cardtop">
+<div>
+<span class="badge">Recursion / Backtracking</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#074</span>
+</div>
+<h3>Word Search</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/word-search/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="75" data-level="Easy" data-pattern="Trees / BST" data-title="maximum depth of binary tree">
+<div class="cardtop">
+<div>
+<span class="badge">Trees / BST</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#075</span>
+</div>
+<h3>Maximum Depth of Binary Tree</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/maximum-depth-of-binary-tree/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="76" data-level="Medium" data-pattern="Trees / BST" data-title="invert binary tree">
+<div class="cardtop">
+<div>
+<span class="badge">Trees / BST</span>
+<span class="level medium">Medium</span>
+</div>
+<span class="num">#076</span>
+</div>
+<h3>Invert Binary Tree</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/invert-binary-tree/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="77" data-level="Easy" data-pattern="Trees / BST" data-title="same tree">
+<div class="cardtop">
+<div>
+<span class="badge">Trees / BST</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#077</span>
+</div>
+<h3>Same Tree</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/same-tree/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="78" data-level="Easy" data-pattern="Trees / BST" data-title="symmetric tree">
+<div class="cardtop">
+<div>
+<span class="badge">Trees / BST</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#078</span>
+</div>
+<h3>Symmetric Tree</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/symmetric-tree/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="79" data-level="Easy" data-pattern="Trees / BST" data-title="binary tree level order traversal">
+<div class="cardtop">
+<div>
+<span class="badge">Trees / BST</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#079</span>
+</div>
+<h3>Binary Tree Level Order Traversal</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/binary-tree-level-order-traversal/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="80" data-level="Medium" data-pattern="Trees / BST" data-title="validate binary search tree">
+<div class="cardtop">
+<div>
+<span class="badge">Trees / BST</span>
+<span class="level medium">Medium</span>
+</div>
+<span class="num">#080</span>
+</div>
+<h3>Validate Binary Search Tree</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/validate-binary-search-tree/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="81" data-level="Easy" data-pattern="Trees / BST" data-title="lowest common ancestor of a binary search tree">
+<div class="cardtop">
+<div>
+<span class="badge">Trees / BST</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#081</span>
+</div>
+<h3>Lowest Common Ancestor of a Binary Search Tree</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="82" data-level="Easy" data-pattern="Trees / BST" data-title="kth smallest element in a bst">
+<div class="cardtop">
+<div>
+<span class="badge">Trees / BST</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#082</span>
+</div>
+<h3>Kth Smallest Element in a BST</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/kth-smallest-element-in-a-bst/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="83" data-level="Easy" data-pattern="Trees / BST" data-title="diameter of binary tree">
+<div class="cardtop">
+<div>
+<span class="badge">Trees / BST</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#083</span>
+</div>
+<h3>Diameter of Binary Tree</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/diameter-of-binary-tree/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="84" data-level="Medium" data-pattern="Trees / BST" data-title="path sum">
+<div class="cardtop">
+<div>
+<span class="badge">Trees / BST</span>
+<span class="level medium">Medium</span>
+</div>
+<span class="num">#084</span>
+</div>
+<h3>Path Sum</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/path-sum/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="85" data-level="Easy" data-pattern="Heap / Priority Queue" data-title="kth largest element in an array">
+<div class="cardtop">
+<div>
+<span class="badge">Heap / Priority Queue</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#085</span>
+</div>
+<h3>Kth Largest Element in an Array</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/kth-largest-element-in-an-array/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="86" data-level="Easy" data-pattern="Heap / Priority Queue" data-title="top k frequent elements">
+<div class="cardtop">
+<div>
+<span class="badge">Heap / Priority Queue</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#086</span>
+</div>
+<h3>Top K Frequent Elements</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/top-k-frequent-elements/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="87" data-level="Easy" data-pattern="Heap / Priority Queue" data-title="k closest points to origin">
+<div class="cardtop">
+<div>
+<span class="badge">Heap / Priority Queue</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#087</span>
+</div>
+<h3>K Closest Points to Origin</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/k-closest-points-to-origin/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="88" data-level="Medium" data-pattern="Heap / Priority Queue" data-title="merge k sorted lists">
+<div class="cardtop">
+<div>
+<span class="badge">Heap / Priority Queue</span>
+<span class="level medium">Medium</span>
+</div>
+<span class="num">#088</span>
+</div>
+<h3>Merge k Sorted Lists</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/merge-k-sorted-lists/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="89" data-level="Easy" data-pattern="Heap / Priority Queue" data-title="last stone weight">
+<div class="cardtop">
+<div>
+<span class="badge">Heap / Priority Queue</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#089</span>
+</div>
+<h3>Last Stone Weight</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/last-stone-weight/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="90" data-level="Easy" data-pattern="Heap / Priority Queue" data-title="find median from data stream">
+<div class="cardtop">
+<div>
+<span class="badge">Heap / Priority Queue</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#090</span>
+</div>
+<h3>Find Median from Data Stream</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/find-median-from-data-stream/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="91" data-level="Easy" data-pattern="Graph BFS / DFS" data-title="number of islands">
+<div class="cardtop">
+<div>
+<span class="badge">Graph BFS / DFS</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#091</span>
+</div>
+<h3>Number of Islands</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/number-of-islands/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="92" data-level="Medium" data-pattern="Graph BFS / DFS" data-title="flood fill">
+<div class="cardtop">
+<div>
+<span class="badge">Graph BFS / DFS</span>
+<span class="level medium">Medium</span>
+</div>
+<span class="num">#092</span>
+</div>
+<h3>Flood Fill</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/flood-fill/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="93" data-level="Easy" data-pattern="Graph BFS / DFS" data-title="clone graph">
+<div class="cardtop">
+<div>
+<span class="badge">Graph BFS / DFS</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#093</span>
+</div>
+<h3>Clone Graph</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/clone-graph/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="94" data-level="Easy" data-pattern="Graph BFS / DFS" data-title="rotting oranges">
+<div class="cardtop">
+<div>
+<span class="badge">Graph BFS / DFS</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#094</span>
+</div>
+<h3>Rotting Oranges</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/rotting-oranges/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="95" data-level="Easy" data-pattern="Graph BFS / DFS" data-title="course schedule">
+<div class="cardtop">
+<div>
+<span class="badge">Graph BFS / DFS</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#095</span>
+</div>
+<h3>Course Schedule</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/course-schedule/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="96" data-level="Medium" data-pattern="Graph BFS / DFS" data-title="pacific atlantic water flow">
+<div class="cardtop">
+<div>
+<span class="badge">Graph BFS / DFS</span>
+<span class="level medium">Medium</span>
+</div>
+<span class="num">#096</span>
+</div>
+<h3>Pacific Atlantic Water Flow</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/pacific-atlantic-water-flow/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="97" data-level="Easy" data-pattern="Greedy" data-title="best time to buy and sell stock ii">
+<div class="cardtop">
+<div>
+<span class="badge">Greedy</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#097</span>
+</div>
+<h3>Best Time to Buy and Sell Stock II</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="98" data-level="Easy" data-pattern="Greedy" data-title="jump game">
+<div class="cardtop">
+<div>
+<span class="badge">Greedy</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#098</span>
+</div>
+<h3>Jump Game</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/jump-game/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="99" data-level="Easy" data-pattern="Greedy" data-title="gas station">
+<div class="cardtop">
+<div>
+<span class="badge">Greedy</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#099</span>
+</div>
+<h3>Gas Station</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/gas-station/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="100" data-level="Medium" data-pattern="Greedy" data-title="assign cookies">
+<div class="cardtop">
+<div>
+<span class="badge">Greedy</span>
+<span class="level medium">Medium</span>
+</div>
+<span class="num">#100</span>
+</div>
+<h3>Assign Cookies</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/assign-cookies/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="101" data-level="Easy" data-pattern="Dynamic Programming" data-title="climbing stairs">
+<div class="cardtop">
+<div>
+<span class="badge">Dynamic Programming</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#101</span>
+</div>
+<h3>Climbing Stairs</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/climbing-stairs/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="102" data-level="Easy" data-pattern="Dynamic Programming" data-title="house robber">
+<div class="cardtop">
+<div>
+<span class="badge">Dynamic Programming</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#102</span>
+</div>
+<h3>House Robber</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/house-robber/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="103" data-level="Easy" data-pattern="Dynamic Programming" data-title="coin change">
+<div class="cardtop">
+<div>
+<span class="badge">Dynamic Programming</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#103</span>
+</div>
+<h3>Coin Change</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/coin-change/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="104" data-level="Medium" data-pattern="Dynamic Programming" data-title="maximum product subarray">
+<div class="cardtop">
+<div>
+<span class="badge">Dynamic Programming</span>
+<span class="level medium">Medium</span>
+</div>
+<span class="num">#104</span>
+</div>
+<h3>Maximum Product Subarray</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/maximum-product-subarray/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="105" data-level="Easy" data-pattern="Dynamic Programming" data-title="longest increasing subsequence">
+<div class="cardtop">
+<div>
+<span class="badge">Dynamic Programming</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#105</span>
+</div>
+<h3>Longest Increasing Subsequence</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/longest-increasing-subsequence/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="106" data-level="Easy" data-pattern="Dynamic Programming" data-title="unique paths">
+<div class="cardtop">
+<div>
+<span class="badge">Dynamic Programming</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#106</span>
+</div>
+<h3>Unique Paths</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/unique-paths/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="107" data-level="Easy" data-pattern="Dynamic Programming" data-title="partition equal subset sum">
+<div class="cardtop">
+<div>
+<span class="badge">Dynamic Programming</span>
+<span class="level easy">Easy</span>
+</div>
+<span class="num">#107</span>
+</div>
+<h3>Partition Equal Subset Sum</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/partition-equal-subset-sum/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article>
+<article class="card" data-id="108" data-level="Medium" data-pattern="Dynamic Programming" data-title="longest common subsequence">
+<div class="cardtop">
+<div>
+<span class="badge">Dynamic Programming</span>
+<span class="level medium">Medium</span>
+</div>
+<span class="num">#108</span>
+</div>
+<h3>Longest Common Subsequence</h3>
+<div class="actions">
+<label><input class="solved" type="checkbox"/> Solved</label>
+<label><input class="revision" type="checkbox"/> Revision</label>
+<a href="https://leetcode.com/problems/longest-common-subsequence/" rel="noopener" target="_blank">Open LeetCode ↗</a>
+</div>
+<div class="rating">
+<span>My rating:</span>
+<button data-rate="1">★</button><button data-rate="2">★</button><button data-rate="3">★</button><button data-rate="4">★</button><button data-rate="5">★</button>
+<span class="ratingText">Not rated</span>
+</div>
+</article></div><div class="empty" hidden="" id="empty">No questions match your filters.</div></main>
+<script>let state = {};
+const cards = [...document.querySelectorAll(".card")];
+
+const TRACKER = "dsa";
+
+async function loadState() {
+  const res = await fetch("/api/progress/" + TRACKER);
+  const list = await res.json();
+  state = {};
+  list.forEach(p => { state[p.itemId] = { solved: p.done === 1, revision: p.flagged === 1, rating: p.rating }; });
+  renderState();
+  filter();
+}
+
+function get(id) { return state[id] || { solved: false, revision: false, rating: 0 }; }
+
+async function persist(id) {
+  const s = get(id);
+  await fetch("/api/progress/" + TRACKER + "/" + id, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ done: s.solved ? 1 : 0, flagged: s.revision ? 1 : 0, rating: s.rating || 0 })
+  });
+  updateStats();
+}
+
+function updateStats() {
+  let solved = 0, rev = 0;
+  cards.forEach(c => {
+    const id = c.dataset.id, s = get(id);
+    if (s.solved) solved++;
+    if (s.revision) rev++;
+    c.classList.toggle("done", s.solved);
+  });
+  const pct = cards.length ? Math.round(solved / cards.length * 100) : 0;
+  document.getElementById("solvedCount").textContent = solved;
+  document.getElementById("revisionCount").textContent = rev;
+  document.getElementById("percent").textContent = pct + "%";
+  document.getElementById("bar").style.width = pct + "%";
+}
+
+function renderState() {
+  cards.forEach(c => {
+    const id = c.dataset.id, s = get(id);
+    c.querySelector(".solved").checked = !!s.solved;
+    c.querySelector(".revision").checked = !!s.revision;
+    c.querySelectorAll("[data-rate]").forEach(b => b.classList.toggle("active", Number(b.dataset.rate) <= Number(s.rating || 0)));
+    c.querySelector(".ratingText").textContent = s.rating ? s.rating + "/5" : "Not rated";
+  });
+  updateStats();
+}
+
+function renderCardOnly(c) {
+  const id = c.dataset.id, s = get(id);
+  c.querySelector(".solved").checked = !!s.solved;
+  c.querySelector(".revision").checked = !!s.revision;
+  c.querySelectorAll("[data-rate]").forEach(b => b.classList.toggle("active", Number(b.dataset.rate) <= Number(s.rating || 0)));
+  c.querySelector(".ratingText").textContent = s.rating ? s.rating + "/5" : "Not rated";
+  c.classList.toggle("done", s.solved);
+}
+
+function filter() {
+  const p = document.getElementById("pattern").value, st = document.getElementById("status").value,
+        lv = document.getElementById("level").value, q = document.getElementById("search").value.toLowerCase();
+  let shown = 0;
+  cards.forEach(c => {
+    const id = c.dataset.id, s = get(id);
+    const ok = (!p || c.dataset.pattern === p) && (!lv || c.dataset.level === lv) && (!q || c.dataset.title.includes(q)) &&
+      (!st || (st === "solved" && s.solved) || (st === "unsolved" && !s.solved) || (st === "revision" && s.revision));
+    c.style.display = ok ? "" : "none";
+    if (ok) shown++;
+  });
+  document.getElementById("empty").hidden = shown !== 0;
+}
+
+cards.forEach(c => {
+  const id = c.dataset.id;
+  c.querySelector(".solved").addEventListener("change", e => { state[id] = { ...get(id), solved: e.target.checked }; renderCardOnly(c); persist(id); });
+  c.querySelector(".revision").addEventListener("change", e => { state[id] = { ...get(id), revision: e.target.checked }; renderCardOnly(c); persist(id); });
+  c.querySelectorAll("[data-rate]").forEach(b => b.addEventListener("click", () => {
+    state[id] = { ...get(id), rating: Number(b.dataset.rate) };
+    renderCardOnly(c); persist(id);
+  }));
+});
+
+["pattern", "status", "level", "search"].forEach(id => document.getElementById(id).addEventListener("input", filter));
+
+document.getElementById("reset").addEventListener("click", async () => {
+  if (confirm("Reset all solved, revision and rating data?")) {
+    await fetch("/api/progress/" + TRACKER + "/reset", { method: "POST" });
+    await loadState();
+  }
+});
+
+loadState();</script>
+</body>
+</html>

@@ -1,0 +1,1700 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Docker + CI/CD + Jenkins Interview Prep (3 YOE)</title>
+<style>
+:root{--bg:#f7fafc;--card:#ffffff;--text:#10233f;--muted:#607089;--line:#dbe8f5;--accent:#1976ff;--accent2:#00b894;--blue:#1976ff;--green:#00b894;--orange:#ff9f43;--shadow:0 10px 30px rgba(25,118,255,.08)}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
+header{position:sticky;top:0;z-index:10;background:#ffffff;border-bottom:1px solid #e2e8f0;box-shadow:0 2px 8px rgba(16,35,63,.04)}
+.wrap{max-width:1250px;margin:auto;padding:18px}
+h1{margin:0;font-size:26px} .sub{color:var(--muted);margin:5px 0 16px;font-size:14px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stat{background:linear-gradient(145deg,#fff,#f5fbff);border:1px solid var(--line);border-radius:14px;padding:12px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.stat b{display:block;font-size:22px}.stat span{font-size:12px;color:var(--muted)}
+.progress{height:14px;background:#dfeaf5;border-radius:99px;overflow:hidden;margin-top:12px;box-shadow:inset 0 1px 3px rgba(0,0,0,.08)}#bar{height:100%;width:0;background:linear-gradient(90deg,#1976ff,#00c2ff,#00b894);transition:.45s}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}select,input[type=search],button.clear{border:1px solid #cfe0ef;background:#fff;border-radius:10px;padding:10px 12px;color:var(--text);box-shadow:0 3px 10px rgba(25,118,255,.05)}
+main{max-width:1250px;margin:auto;padding:18px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+.card{background:linear-gradient(145deg,#fff,#fafdff);border:1px solid var(--line);border-radius:16px;padding:15px;box-shadow:var(--shadow);transition:.2s;position:relative}
+.card:hover{transform:translateY(-3px);box-shadow:0 14px 32px rgba(25,118,255,.12)}
+.card.reviewed{border-color:#8ee4cd;background:linear-gradient(180deg,#fff,#effff9)}
+.cardtop{display:flex;justify-content:space-between;align-items:center}
+.cardtop-right{display:flex;align-items:center;gap:8px}
+.badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#e5f0ff,#e7fff7);color:#1766c2;border:1px solid #cfe4f7}
+.num{font-size:11px;color:#9aa3b5}
+h3{font-size:15px;line-height:1.35;margin:12px 0}
+.star-flag{border:0;background:none;font-size:19px;color:#d7dce6;cursor:pointer;padding:0;line-height:1}
+.star-flag.active{color:#ffb703;text-shadow:0 0 8px rgba(255,183,3,.3)}
+.toggle-ans{border:1px solid #cfe0ef;background:#f5faff;color:#1766c2;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600;cursor:pointer}
+.toggle-ans:hover{background:#eaf3ff}
+.answer{margin-top:10px;font-size:13.5px;line-height:1.55;color:#2b3a52;background:#f7fbff;border:1px solid #e3edf7;border-radius:10px;padding:10px 12px}
+.actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;margin-top:10px}
+.rating{display:flex;align-items:center;gap:3px;margin-top:10px;font-size:12px;color:var(--muted)}
+.rating button{border:0;background:none;color:#cbd1dd;font-size:18px;padding:0;cursor:pointer}
+.rating button.active{color:#ffb703}
+.ratingText{margin-left:5px}
+.empty{text-align:center;color:var(--muted);padding:40px}
+@media(max-width:700px){.stats{grid-template-columns:repeat(2,1fr)}h1{font-size:20px}}
+</style>
+</head>
+<body>
+<style>
+.gtabs{position:sticky;top:0;z-index:999;display:flex;gap:2px;background:#0f1420;padding:6px 10px;overflow-x:auto;white-space:nowrap;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+.gtabs a{color:#aab4c5;text-decoration:none;font-size:12.5px;font-weight:600;padding:7px 12px;border-radius:8px;flex:0 0 auto}
+.gtabs a:hover{background:#1c2333;color:#fff}
+.gtabs a.active{background:#2f6fed;color:#fff}
+header{top:38px !important}
+</style>
+<nav class="gtabs" id="globalTabs">
+<a href="/" data-path="/">Home</a>
+<a href="/dsa" data-path="/dsa">DSA</a>
+<a href="/dbms" data-path="/dbms">DBMS</a>
+<a href="/azure" data-path="/azure">Azure</a>
+<a href="/java" data-path="/java">Java</a>
+<a href="/docker" data-path="/docker">Docker / CI-CD</a>
+<a href="/misc" data-path="/misc">Misc</a>
+</nav>
+<script>
+(function(){
+  var here = window.location.pathname.replace(/\/$/, "") || "/";
+  document.querySelectorAll("#globalTabs a").forEach(function(a){
+    var p = a.getAttribute("data-path");
+    if (p === here || (p !== "/" && here.indexOf(p) === 0)) a.classList.add("active");
+  });
+})();
+</script>
+
+<img src="/img/banner.png" alt="Code and Cricket Jams banner" style="display:block;width:100%;max-height:220px;object-fit:cover;">
+
+
+<header><div class="wrap">
+<h1>&#128051; Docker + CI/CD + Jenkins Interview Prep</h1>
+<div class="sub">Aimed at ~3 years of software development experience &bull; 69 questions &bull; Progress saves automatically to MySQL</div>
+<div class="stats">
+<div class="stat"><b id="total">69</b><span>Total questions</span></div>
+<div class="stat"><b id="reviewedCount">0</b><span>Reviewed</span></div>
+<div class="stat"><b id="importantCount">0</b><span>Marked important</span></div>
+<div class="stat"><b id="percent">0%</b><span>Overall progress</span></div>
+</div>
+<div class="progress"><div id="bar"></div></div>
+<div class="controls">
+<select id="category"><option value="">All categories</option><option>Docker Fundamentals</option><option>Dockerfile &amp; Images</option><option>Docker Commands</option><option>Networking &amp; Volumes</option><option>Docker Compose</option><option>CI/CD Fundamentals</option><option>Jenkins Fundamentals</option><option>Jenkins Pipeline Details</option><option>Jenkins Security &amp; Reuse</option><option>Jenkins + Docker/Maven</option><option>Build &amp; Artifacts</option><option>Deployment Strategies</option><option>Notifications &amp; Microservices</option><option>Scenario Questions (3 YOE)</option></select>
+<select id="status"><option value="">All status</option><option value="reviewed">Reviewed</option><option value="unreviewed">Not reviewed</option><option value="important">Important</option></select>
+<input id="search" type="search" placeholder="Search question...">
+<button class="clear" id="reset">Reset all progress</button>
+</div>
+</div></header>
+<main><div class="grid" id="grid">
+
+<article class="card" data-id="1" data-category="Docker Fundamentals" data-title="what is docker and why is it used?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Docker Fundamentals</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#001</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>What is Docker and why is it used?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>Docker is a containerization platform that packages an application together with its dependencies, libraries and configuration into a single, portable unit called a container. It solves the classic “it works on my machine” problem because the container runs identically on a laptop, a CI server, or production.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="2" data-category="Docker Fundamentals" data-title="what is a container?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Docker Fundamentals</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#002</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>What is a Container?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>A container is a lightweight, isolated runtime instance created from an image. It shares the host machine&#x27;s OS kernel but has its own filesystem, process space, and network interface, which makes it much lighter and faster to start than a virtual machine.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="3" data-category="Docker Fundamentals" data-title="what is an image?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Docker Fundamentals</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#003</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>What is an Image?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>A Docker image is a read-only template that contains the application code, runtime, libraries and settings needed to run it. Images are built in layers, and containers are simply running instances created from an image.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="4" data-category="Docker Fundamentals" data-title="difference between an image and a container?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Docker Fundamentals</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#004</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>Difference between an Image and a Container?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>An image is the static blueprint (like a class), while a container is a running instance of that image (like an object). You can create many containers from the same image, each with its own writable layer and lifecycle.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="5" data-category="Docker Fundamentals" data-title="difference between a virtual machine and a container?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Docker Fundamentals</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#005</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>Difference between a Virtual Machine and a Container?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>A VM virtualizes the hardware and runs a full guest OS with its own kernel, which makes it heavier and slower to boot. A container shares the host OS kernel and only isolates the process, filesystem and network, so it starts in seconds and uses far less memory/disk.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="6" data-category="Docker Fundamentals" data-title="what is docker registry and docker hub?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Docker Fundamentals</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#006</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>What is Docker Registry and Docker Hub?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>A Docker Registry is a service that stores and distributes Docker images. Docker Hub is the most common public registry; companies also run private registries (Nexus, ECR, ACR, Harbor) to store internal images securely.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="7" data-category="Docker Fundamentals" data-title="how would you explain docker in an interview in one line, from real project experience?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Docker Fundamentals</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#007</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>How would you explain Docker in an interview in one line, from real project experience?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>In my project, we containerized each microservice with its own Dockerfile, pushed versioned images to a private registry, and Jenkins pulled and deployed those exact images to staging and production, so every environment ran the identical build.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="8" data-category="Dockerfile &amp; Images" data-title="what is a dockerfile?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Dockerfile &amp; Images</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#008</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>What is a Dockerfile?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>A Dockerfile is a plain text file containing a sequence of instructions (FROM, COPY, RUN, CMD, etc.) that Docker reads to build an image automatically and repeatably.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="9" data-category="Dockerfile &amp; Images" data-title="difference between cmd and entrypoint?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Dockerfile &amp; Images</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#009</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>Difference between CMD and ENTRYPOINT?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>ENTRYPOINT defines the fixed command that always runs when the container starts, while CMD supplies default arguments that can be easily overridden at `docker run`. A common pattern is ENTRYPOINT [&quot;java&quot;,&quot;-jar&quot;,&quot;app.jar&quot;] with CMD used only for optional default arguments.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="10" data-category="Dockerfile &amp; Images" data-title="what is a multi-stage docker build and why use it?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Dockerfile &amp; Images</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#010</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>What is a multi-stage Docker build and why use it?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>A multi-stage build uses multiple FROM statements in one Dockerfile — one stage compiles/builds the app (e.g. with the full Maven + JDK toolchain), and a final, much smaller stage (e.g. a slim JRE) copies over only the built artifact. This keeps the final production image small and avoids shipping build tools, source code or secrets.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="11" data-category="Dockerfile &amp; Images" data-title="what is .dockerignore used for?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Dockerfile &amp; Images</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#011</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>What is .dockerignore used for?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>Similar to .gitignore, .dockerignore excludes files (like .git, target/, node_modules, local .env files) from the build context, which makes builds faster and prevents accidentally baking secrets or unnecessary files into the image.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="12" data-category="Dockerfile &amp; Images" data-title="how do you optimize a docker image (layer caching, image size)?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Dockerfile &amp; Images</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#012</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>How do you optimize a Docker image (layer caching, image size)?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>Order instructions from least to most frequently changing (e.g. copy pom.xml and run dependency resolution before copying source code) so Docker&#x27;s layer cache is reused across builds. Use slim/alpine base images, multi-stage builds, and combine related RUN commands to reduce the number of layers and final image size.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="13" data-category="Dockerfile &amp; Images" data-title="what is image tagging and why does it matter in production?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Dockerfile &amp; Images</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#013</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>What is image tagging and why does it matter in production?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>Tagging assigns a version identifier to an image, e.g. myapp:1.4.2 or myapp:git-sha. Using immutable, specific tags (not just `latest`) is important in production so you always know exactly which build is running and can roll back to a precise previous version.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="14" data-category="Docker Commands" data-title="command to build a docker image">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Docker Commands</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#014</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>Command to build a Docker image</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>`docker build -t image-name .` — builds an image from the Dockerfile in the current directory and tags it as image-name.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="15" data-category="Docker Commands" data-title="command to run a container">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Docker Commands</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#015</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>Command to run a container</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>`docker run -d --name container-name image-name` — starts a container in detached (background) mode from the given image.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="16" data-category="Docker Commands" data-title="command to list running containers">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Docker Commands</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#016</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>Command to list running containers</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>`docker ps` — shows all currently running containers.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="17" data-category="Docker Commands" data-title="command to list all containers (including stopped)">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Docker Commands</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#017</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>Command to list all containers (including stopped)</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>`docker ps -a` — lists every container regardless of its current state.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="18" data-category="Docker Commands" data-title="command to stop a container">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Docker Commands</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#018</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>Command to stop a container</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>`docker stop container-name` — gracefully stops a running container.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="19" data-category="Docker Commands" data-title="command to start a stopped container">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Docker Commands</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#019</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>Command to start a stopped container</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>`docker start container-name` — restarts a container that was previously stopped.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="20" data-category="Docker Commands" data-title="command to remove a container">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Docker Commands</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#020</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>Command to remove a container</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>`docker rm -f container-name` — force-removes a container, even if it&#x27;s currently running.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="21" data-category="Docker Commands" data-title="command to remove an image">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Docker Commands</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#021</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>Command to remove an image</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>`docker rmi image-name` — deletes a local image (fails if a container is still using it, unless you add -f).</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="22" data-category="Docker Commands" data-title="command to view container logs">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Docker Commands</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#022</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>Command to view container logs</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>`docker logs -f container-name` — streams (follows) the logs of a container in real time, useful for live debugging.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="23" data-category="Docker Commands" data-title="command to create a docker network">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Docker Commands</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#023</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>Command to create a Docker network</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>`docker network create microservice-network` — creates a custom bridge network that containers can join to communicate by name.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="24" data-category="Docker Commands" data-title="command to inspect a docker network">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Docker Commands</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#024</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>Command to inspect a Docker network</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>`docker network inspect network-name` — shows detailed JSON output including which containers are attached and their IP addresses.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="25" data-category="Networking &amp; Volumes" data-title="what is a docker network?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Networking &amp; Volumes</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#025</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>What is a Docker Network?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>A Docker network is a virtual network that lets containers discover and communicate with each other, isolated from the host network unless explicitly published.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="26" data-category="Networking &amp; Volumes" data-title="why is a custom docker network important for microservices?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Networking &amp; Volumes</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#026</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>Why is a custom Docker network important for microservices?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>Containers on the same custom network can reach each other using their container/service name as a hostname (e.g. http://service-registry:8761), which is essential for microservices that need to call one another without hardcoding IPs.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="27" data-category="Networking &amp; Volumes" data-title="why doesn&#x27;t &#x27;localhost&#x27; work between two containers?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Networking &amp; Volumes</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#027</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>Why doesn&#x27;t &#x27;localhost&#x27; work between two containers?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>Inside a container, `localhost` always refers to that same container, not the host machine or a sibling container. To reach another container you must use its container/service name over a shared Docker network, or the host&#x27;s actual IP.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="28" data-category="Networking &amp; Volumes" data-title="what is host.docker.internal used for?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Networking &amp; Volumes</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#028</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>What is host.docker.internal used for?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>It&#x27;s a special DNS name Docker provides so a container can reach services running on the host machine itself (e.g. a database running natively on your laptop, not in a container).</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="29" data-category="Networking &amp; Volumes" data-title="what is a volume in docker and why use it?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Networking &amp; Volumes</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#029</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>What is a Volume in Docker and why use it?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>A volume is Docker-managed storage that persists data outside the container&#x27;s writable layer. Since containers are ephemeral, anything written inside them is lost when the container is removed — volumes (or bind mounts) keep data like database files safe across container restarts/recreation.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="30" data-category="Networking &amp; Volumes" data-title="what is port mapping and how do you do it?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Networking &amp; Volumes</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#030</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>What is Port Mapping and how do you do it?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>Port mapping exposes a container&#x27;s internal port on the host machine so external clients can reach it, using the -p flag: `docker run -p 8080:8080 image-name` maps host port 8080 to container port 8080.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="31" data-category="Networking &amp; Volumes" data-title="how do microservices typically communicate with each other in a dockerized setup?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Networking &amp; Volumes</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#031</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>How do microservices typically communicate with each other in a Dockerized setup?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>They&#x27;re placed on the same custom Docker network and call each other using service/container names as hostnames (e.g. http://order-service:8080), often through a service registry or API gateway rather than hardcoded IPs.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="32" data-category="Docker Compose" data-title="what is docker compose and when do you use it?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Docker Compose</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#032</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>What is Docker Compose and when do you use it?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>Docker Compose is a tool for defining and running multi-container applications using a single YAML file (docker-compose.yml). It&#x27;s ideal for local development or small deployments where you need several services (app, database, cache) running together with one command.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="33" data-category="Docker Compose" data-title="commands to start and stop a compose stack">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Docker Compose</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#033</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>Commands to start and stop a Compose stack</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>`docker compose up -d` starts all defined services in the background; `docker compose down` stops and removes the containers, networks (and optionally volumes) created by Compose.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="34" data-category="CI/CD Fundamentals" data-title="what is ci/cd?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">CI/CD Fundamentals</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#034</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>What is CI/CD?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>CI/CD stands for Continuous Integration and Continuous Delivery/Deployment. CI automates building and testing every code change frequently, while CD automates packaging and releasing that change to staging or production reliably and repeatably.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="35" data-category="CI/CD Fundamentals" data-title="difference between continuous delivery and continuous deployment?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">CI/CD Fundamentals</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#035</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>Difference between Continuous Delivery and Continuous Deployment?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>Continuous Delivery means every change that passes the pipeline is automatically prepared and ready to release, but a human still clicks “deploy” to production. Continuous Deployment goes one step further and releases automatically to production with no manual approval, as long as all checks pass.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="36" data-category="CI/CD Fundamentals" data-title="why is ci/cd important in a real project?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">CI/CD Fundamentals</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#036</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>Why is CI/CD important in a real project?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>It catches integration bugs early (by building/testing on every commit), removes manual, error-prone release steps, and lets a team ship smaller changes more frequently and confidently, with a fast, consistent rollback path if something breaks.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="37" data-category="Jenkins Fundamentals" data-title="what is jenkins?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Jenkins Fundamentals</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#037</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>What is Jenkins?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>Jenkins is an open-source automation server widely used to build CI/CD pipelines — it can compile code, run tests, build Docker images, and deploy applications automatically whenever code changes.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="38" data-category="Jenkins Fundamentals" data-title="what is a jenkins pipeline?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Jenkins Fundamentals</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#038</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>What is a Jenkins Pipeline?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>A Jenkins Pipeline is code (usually written in a Jenkinsfile) that defines the entire build-test-deploy process as a series of automated stages, so the whole delivery process is version-controlled alongside the application code.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="39" data-category="Jenkins Fundamentals" data-title="what is a jenkinsfile?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Jenkins Fundamentals</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#039</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>What is a Jenkinsfile?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>A Jenkinsfile is a text file, checked into the source repository, that defines the pipeline as code — its stages, steps, and post-build actions — so the pipeline itself is versioned and reviewed like any other code change.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="40" data-category="Jenkins Fundamentals" data-title="difference between declarative and scripted pipeline?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Jenkins Fundamentals</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#040</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>Difference between Declarative and Scripted Pipeline?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>Declarative pipelines use a simpler, structured, opinionated syntax (pipeline { stages { ... } }) that&#x27;s easier to read and maintain. Scripted pipelines use full Groovy code for maximum flexibility, at the cost of being more complex to write and debug.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="41" data-category="Jenkins Fundamentals" data-title="what are jenkins agents?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Jenkins Fundamentals</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#041</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>What are Jenkins Agents?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>Agents (formerly called “slaves”) are the worker machines/containers where Jenkins actually executes pipeline jobs, while the Jenkins controller (master) schedules work and manages the UI/configuration.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="42" data-category="Jenkins Pipeline Details" data-title="what are stages in a jenkins pipeline?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Jenkins Pipeline Details</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#042</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>What are stages in a Jenkins Pipeline?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>Stages divide a pipeline into logical, visualized phases such as Checkout, Build, Test, and Deploy, making it easy to see exactly where a pipeline succeeded or failed.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="43" data-category="Jenkins Pipeline Details" data-title="what is a post block used for?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Jenkins Pipeline Details</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#043</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>What is a post block used for?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>The `post` block defines actions that run after the pipeline (or a stage) finishes, based on the outcome — e.g. `always` to clean up the workspace, `success` to send a passing notification, or `failure` to alert the team.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="44" data-category="Jenkins Pipeline Details" data-title="how do you trigger jenkins builds automatically?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Jenkins Pipeline Details</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#044</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>How do you trigger Jenkins builds automatically?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>Common triggers are Git webhooks (build fires immediately when code is pushed), SCM polling (Jenkins periodically checks for new commits), or cron-style scheduled triggers for nightly/periodic builds.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="45" data-category="Jenkins Pipeline Details" data-title="what is scm polling?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Jenkins Pipeline Details</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#045</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>What is SCM polling?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>SCM polling is a trigger method where Jenkins checks the source repository on a fixed interval (e.g. every 5 minutes) for new commits and starts a build if changes are found — simpler to set up than webhooks but less immediate.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="46" data-category="Jenkins Pipeline Details" data-title="how does jenkins integrate with git?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Jenkins Pipeline Details</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#046</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>How does Jenkins integrate with Git?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>Through the Git plugin: you configure the repository URL and credentials in the job/pipeline, and Jenkins clones/checks out the code at the start of the pipeline, optionally triggered by a webhook on push.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="47" data-category="Jenkins Pipeline Details" data-title="what is the jenkins workspace?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Jenkins Pipeline Details</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#047</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>What is the Jenkins workspace?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>The workspace is the working directory on the agent where Jenkins checks out source code and runs build steps for a given job — each job typically gets its own workspace directory.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="48" data-category="Jenkins Pipeline Details" data-title="what are jenkins plugins, and name a few commonly used ones?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Jenkins Pipeline Details</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#048</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>What are Jenkins plugins, and name a few commonly used ones?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>Plugins extend Jenkins&#x27; core functionality. Commonly used ones include the Git plugin (SCM integration), Docker Pipeline plugin, Maven Integration plugin, Credentials Binding, Blue Ocean (UI), and Slack Notification.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="49" data-category="Jenkins Security &amp; Reuse" data-title="how do you store secrets securely in jenkins?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Jenkins Security &amp; Reuse</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#049</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>How do you store secrets securely in Jenkins?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>Using Jenkins&#x27; built-in Credentials Manager, secrets (passwords, tokens, SSH keys) are stored encrypted and referenced by an ID in the pipeline (e.g. withCredentials block), so they never appear in plain text in the Jenkinsfile or logs.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="50" data-category="Jenkins Security &amp; Reuse" data-title="what is a jenkins shared library and why use one?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Jenkins Security &amp; Reuse</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#050</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>What is a Jenkins Shared Library and why use one?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>A Shared Library is a separate Git repository holding reusable Groovy pipeline code (common stages, functions, notification logic) that multiple Jenkinsfiles across different projects can import, avoiding duplicated pipeline logic.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="51" data-category="Jenkins Security &amp; Reuse" data-title="how do you restart jenkins safely?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Jenkins Security &amp; Reuse</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#051</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>How do you restart Jenkins safely?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>Either through the Jenkins UI (Manage Jenkins &gt; Restart, which waits for running builds to finish) or via the underlying service command (e.g. `systemctl restart jenkins`), which is more abrupt and can interrupt in-progress builds.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="52" data-category="Jenkins + Docker/Maven" data-title="what role does docker play inside a jenkins pipeline?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Jenkins + Docker/Maven</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#052</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>What role does Docker play inside a Jenkins pipeline?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>Docker provides a consistent, isolated build environment — a pipeline stage can run inside a specific Docker image (with the exact JDK/Node/Maven version needed), and Jenkins can also build and push application Docker images as part of the deploy stage.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="53" data-category="Jenkins + Docker/Maven" data-title="how do you build a docker image from within a jenkins pipeline?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Jenkins + Docker/Maven</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#053</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>How do you build a Docker image from within a Jenkins pipeline?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>By running Docker build commands inside a pipeline stage, e.g. `sh &#x27;docker build -t myapp:${BUILD_NUMBER} .&#x27;`, often followed by `docker push` to a registry so the image can be pulled by the deployment environment.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="54" data-category="Jenkins + Docker/Maven" data-title="what is maven&#x27;s role in a jenkins pipeline?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Jenkins + Docker/Maven</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#054</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>What is Maven&#x27;s role in a Jenkins pipeline?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>Maven compiles the Java application, runs unit tests, resolves dependencies, and packages the output into a JAR/WAR — Jenkins simply invokes Maven commands (like `mvn clean package`) as pipeline steps.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="55" data-category="Jenkins + Docker/Maven" data-title="how do you skip tests during a maven build, and when would you (not) do that?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Jenkins + Docker/Maven</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#055</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>How do you skip tests during a Maven build, and when would you (not) do that?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>`mvn clean package -DskipTests` skips running tests. It&#x27;s occasionally used for a quick local/debug build, but skipping tests in a real CI pipeline is generally discouraged since it removes the safety net CI is meant to provide.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="56" data-category="Build &amp; Artifacts" data-title="what is an artifact in jenkins/ci terminology?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Build &amp; Artifacts</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#056</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>What is an artifact in Jenkins/CI terminology?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>An artifact is a build output that&#x27;s archived for later use — typically a JAR, WAR, or Docker image — which can be published to a repository (Nexus/Artifactory) or a registry and later deployed without rebuilding.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="57" data-category="Build &amp; Artifacts" data-title="difference between build and deployment?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Build &amp; Artifacts</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#057</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>Difference between build and deployment?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>A build compiles source code and produces artifacts (e.g. a JAR or Docker image) — it doesn&#x27;t run anywhere yet. Deployment takes that already-built artifact and releases/runs it in a target environment (staging, production).</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="58" data-category="Deployment Strategies" data-title="what is blue-green deployment?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Deployment Strategies</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#058</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>What is Blue-Green deployment?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>Blue-Green deployment keeps two identical production environments (Blue = current live, Green = new version). Traffic is switched from Blue to Green only once Green is verified healthy, giving near-zero downtime and an instant rollback (just switch traffic back to Blue).</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="59" data-category="Deployment Strategies" data-title="what is a rolling deployment?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Deployment Strategies</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#059</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>What is a Rolling deployment?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>A rolling deployment gradually replaces old instances with new ones a few at a time, so the application stays available throughout, though both versions run simultaneously for a short period.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="60" data-category="Deployment Strategies" data-title="what is canary deployment?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Deployment Strategies</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#060</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>What is Canary deployment?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>Canary deployment releases the new version to a small subset of users/traffic first, monitors metrics/errors, and only rolls it out to everyone once it&#x27;s proven stable — reducing the blast radius of a bad release.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="61" data-category="Deployment Strategies" data-title="how would you roll back a bad production deployment?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Deployment Strategies</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#061</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>How would you roll back a bad production deployment?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>With Blue-Green, roll back by switching traffic back to the previous (still-running) environment instantly. With rolling/canary deployments, redeploy the last known-good, tagged image/artifact through the same pipeline used to deploy the bad one, keeping the process auditable and repeatable.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="62" data-category="Notifications &amp; Microservices" data-title="how do you send build/deploy notifications from jenkins?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Notifications &amp; Microservices</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#062</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>How do you send build/deploy notifications from Jenkins?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>Through plugins/integrations that post to Email, Slack, or Microsoft Teams, typically configured in the pipeline&#x27;s `post` block so the team is notified automatically on success or failure.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="63" data-category="Notifications &amp; Microservices" data-title="how does jenkins support a microservices architecture?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Notifications &amp; Microservices</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#063</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>How does Jenkins support a microservices architecture?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>Each microservice typically gets its own Jenkinsfile/pipeline, so services can be built, tested, and deployed independently and in parallel, rather than one large pipeline coupling every service together.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="64" data-category="Scenario Questions (3 YOE)" data-title="a jenkins pipeline suddenly starts failing at the docker build stage only in ci, but works locally — how do you debug it?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Scenario Questions (3 YOE)</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#064</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>A Jenkins pipeline suddenly starts failing at the Docker build stage only in CI, but works locally — how do you debug it?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>Check for environment differences first: is the Jenkins agent&#x27;s Docker daemon version different, is the build using a stale layer cache, are required build args/secrets missing on the agent, or is disk space low on the agent. I&#x27;d reproduce by SSHing into the agent (or running the exact same `docker build` command Jenkins runs) to isolate whether it&#x27;s a pipeline configuration issue or an environment issue.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="65" data-category="Scenario Questions (3 YOE)" data-title="your docker image size keeps growing across releases — how would you investigate and fix it?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Scenario Questions (3 YOE)</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#065</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>Your Docker image size keeps growing across releases — how would you investigate and fix it?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>I&#x27;d run `docker history image-name` to see which layers are largest, check for unnecessary files being copied (missing .dockerignore), unused build tools left in the final image, and switch to a multi-stage build with a slim/alpine runtime image so only the final artifact ships, not the whole build toolchain.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="66" data-category="Scenario Questions (3 YOE)" data-title="how do you keep secrets out of a docker image and jenkins logs entirely?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Scenario Questions (3 YOE)</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#066</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>How do you keep secrets out of a Docker image and Jenkins logs entirely?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>Never bake secrets into the Dockerfile with COPY/ENV — instead inject them at runtime via environment variables or a secrets manager. In Jenkins, use the Credentials Manager with `withCredentials`, mask sensitive values in console output, and avoid printing environment variables in build steps.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="67" data-category="Scenario Questions (3 YOE)" data-title="how would you add basic ci/cd security checks to an existing pipeline?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Scenario Questions (3 YOE)</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#067</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>How would you add basic CI/CD security checks to an existing pipeline?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>Add a dependency vulnerability scan (e.g. OWASP Dependency-Check or Trivy for the Docker image) as an early pipeline stage that fails the build above a severity threshold, plus static code analysis (SonarQube), and ensure credentials are scoped with least privilege.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="68" data-category="Scenario Questions (3 YOE)" data-title="how would you achieve a zero-downtime deployment for a spring boot microservice?">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Scenario Questions (3 YOE)</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#068</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>How would you achieve a zero-downtime deployment for a Spring Boot microservice?</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>Use a Blue-Green or rolling deployment behind a load balancer: bring up the new version, wait for its health-check endpoint to report healthy, shift traffic over gradually (or all at once for Blue-Green), and only then terminate the old instances — with the previous version kept ready for an instant rollback.</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+<article class="card" data-id="69" data-category="Scenario Questions (3 YOE)" data-title="give a 60-second answer: &quot;walk me through your ci/cd setup on your last project.&quot;">
+  <div class="cardtop">
+    <div>
+      <span class="badge">Scenario Questions (3 YOE)</span>
+    </div>
+    <div class="cardtop-right">
+      <span class="num">#069</span>
+      <button class="star-flag" data-role="important" title="Mark important">&#9733;</button>
+    </div>
+  </div>
+  <h3>Give a 60-second answer: &quot;Walk me through your CI/CD setup on your last project.&quot;</h3>
+  <button class="toggle-ans">Show Answer &#9660;</button>
+  <div class="answer" hidden>“We used Jenkins with a Jenkinsfile checked into each microservice&#x27;s repo. A GitHub webhook triggered the pipeline on every push, which ran Maven build and unit tests, built a Docker image tagged with the Git commit SHA, pushed it to our private registry, then deployed to a staging environment via a rolling update. After manual QA sign-off, the same image was promoted to production using a Blue-Green strategy, so we could roll back instantly if monitoring showed errors after the switch.”</div>
+  <div class="actions">
+    <label><input type="checkbox" class="reviewed"> Reviewed</label>
+  </div>
+  <div class="rating">
+    <span>My rating:</span>
+    <button data-rate="1">&#9733;</button><button data-rate="2">&#9733;</button><button data-rate="3">&#9733;</button><button data-rate="4">&#9733;</button><button data-rate="5">&#9733;</button>
+    <span class="ratingText">Not rated</span>
+  </div>
+</article>
+</div><div class="empty" id="empty" hidden>No questions match your filters.</div></main>
+<script>
+const TRACKER = "docker";
+let state = {};
+const cards = [...document.querySelectorAll(".card")];
+
+async function loadState() {
+  const res = await fetch("/api/progress/" + TRACKER);
+  const list = await res.json();
+  state = {};
+  list.forEach(p => { state[p.itemId] = { reviewed: p.done === 1, important: p.flagged === 1, rating: p.rating }; });
+  renderState();
+  filter();
+}
+
+async function save(id) {
+  const s = get(id);
+  await fetch("/api/progress/" + TRACKER + "/" + id, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ done: s.reviewed ? 1 : 0, flagged: s.important ? 1 : 0, rating: s.rating || 0 })
+  });
+  updateStats();
+}
+function get(id) { return state[id] || { reviewed:false, important:false, rating:0 }; }
+
+function updateStats() {
+  let reviewed = 0, important = 0;
+  cards.forEach(c => {
+    const id = c.dataset.id, s = get(id);
+    if (s.reviewed) reviewed++;
+    if (s.important) important++;
+    c.classList.toggle("reviewed", !!s.reviewed);
+  });
+  const pct = cards.length ? Math.round(reviewed / cards.length * 100) : 0;
+  document.getElementById("reviewedCount").textContent = reviewed;
+  document.getElementById("importantCount").textContent = important;
+  document.getElementById("percent").textContent = pct + "%";
+  document.getElementById("bar").style.width = pct + "%";
+}
+
+function renderCard(c) {
+  const id = c.dataset.id, s = get(id);
+  c.querySelector(".reviewed").checked = !!s.reviewed;
+  c.querySelector(".star-flag").classList.toggle("active", !!s.important);
+  c.querySelectorAll("[data-rate]").forEach(b => b.classList.toggle("active", Number(b.dataset.rate) <= Number(s.rating || 0)));
+  c.querySelector(".ratingText").textContent = s.rating ? s.rating + "/5" : "Not rated";
+}
+
+function renderState() { cards.forEach(renderCard); updateStats(); }
+
+function filter() {
+  const cat = document.getElementById("category").value;
+  const st = document.getElementById("status").value;
+  const q = document.getElementById("search").value.toLowerCase();
+  let shown = 0;
+  cards.forEach(c => {
+    const id = c.dataset.id, s = get(id);
+    const ok = (!cat || c.dataset.category === cat) && (!q || c.dataset.title.includes(q)) &&
+      (!st || (st === "reviewed" && s.reviewed) || (st === "unreviewed" && !s.reviewed) || (st === "important" && s.important));
+    c.style.display = ok ? "" : "none";
+    if (ok) shown++;
+  });
+  document.getElementById("empty").hidden = shown !== 0;
+}
+
+cards.forEach(c => {
+  const id = c.dataset.id;
+  c.querySelector(".toggle-ans").addEventListener("click", (e) => {
+    const ans = c.querySelector(".answer");
+    const nowHidden = ans.hasAttribute("hidden");
+    if (nowHidden) { ans.removeAttribute("hidden"); e.target.innerHTML = "Hide Answer &#9650;"; }
+    else { ans.setAttribute("hidden", ""); e.target.innerHTML = "Show Answer &#9660;"; }
+  });
+  c.querySelector(".reviewed").addEventListener("change", e => { state[id] = { ...get(id), reviewed: e.target.checked }; renderCard(c); save(id); });
+  c.querySelector(".star-flag").addEventListener("click", () => { state[id] = { ...get(id), important: !get(id).important }; renderCard(c); save(id); });
+  c.querySelectorAll("[data-rate]").forEach(b => b.addEventListener("click", () => {
+    state[id] = { ...get(id), rating: Number(b.dataset.rate) };
+    renderCard(c); save(id);
+  }));
+});
+
+["category","status","search"].forEach(id => document.getElementById(id).addEventListener("input", filter));
+document.getElementById("reset").addEventListener("click", async () => {
+  if (confirm("Reset all reviewed, important and rating data?")) {
+    await fetch("/api/progress/" + TRACKER + "/reset", { method: "POST" });
+    await loadState();
+  }
+});
+
+loadState();
+</script>
+</body>
+</html>

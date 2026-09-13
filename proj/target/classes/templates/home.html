@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Interview Prep Hub</title>
+<style>
+:root{--bg:#f7fafc;--card:#ffffff;--text:#10233f;--muted:#607089;--line:#dbe8f5;--shadow:0 10px 30px rgba(25,118,255,.08)}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
+.gtabs{position:sticky;top:0;z-index:999;display:flex;gap:2px;background:#0f1420;padding:6px 10px;overflow-x:auto;white-space:nowrap}
+.gtabs a{color:#aab4c5;text-decoration:none;font-size:12.5px;font-weight:600;padding:7px 12px;border-radius:8px;flex:0 0 auto}
+.gtabs a:hover{background:#1c2333;color:#fff}
+.gtabs a.active{background:#2f6fed;color:#fff}
+.wrap{max-width:1000px;margin:auto;padding:40px 20px}
+h1{font-size:30px;margin:0 0 6px}
+.sub{color:var(--muted);margin:0 0 32px;font-size:15px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.tile{display:block;background:linear-gradient(145deg,#fff,#fafdff);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:var(--shadow);text-decoration:none;color:var(--text);transition:.2s}
+.tile:hover{transform:translateY(-4px);box-shadow:0 16px 34px rgba(25,118,255,.14)}
+.tile .icon{font-size:30px;margin-bottom:10px;display:block}
+.tile h2{margin:0 0 6px;font-size:17px}
+.tile p{margin:0;font-size:13px;color:var(--muted);line-height:1.5}
+</style>
+</head>
+<body>
+<nav class="gtabs" id="globalTabs">
+<a href="/" data-path="/">Home</a>
+<a href="/dsa" data-path="/dsa">DSA</a>
+<a href="/dbms" data-path="/dbms">DBMS</a>
+<a href="/azure" data-path="/azure">Azure</a>
+<a href="/java" data-path="/java">Java</a>
+<a href="/docker" data-path="/docker">Docker / CI-CD</a>
+<a href="/misc" data-path="/misc">Misc</a>
+</nav>
+<script>
+(function(){
+  var here = window.location.pathname.replace(/\/$/, "") || "/";
+  document.querySelectorAll("#globalTabs a").forEach(function(a){
+    var p = a.getAttribute("data-path");
+    if (p === here || (p !== "/" && here.indexOf(p) === 0)) a.classList.add("active");
+  });
+})();
+</script>
+
+<img src="/img/banner.png" alt="Code and Cricket Jams banner" style="display:block;width:100%;max-height:220px;object-fit:cover;">
+
+
+<div class="wrap">
+<h1>🎯 Interview Prep Hub</h1>
+<div class="sub">All your trackers in one place — progress, reviews, importance flags, and ratings save to MySQL and follow you across devices.</div>
+<div class="grid">
+  <a class="tile" href="/dsa">
+    <span class="icon">🚀</span>
+    <h2>DSA Tracker</h2>
+    <p>108 pattern-based LeetCode questions, Easy → Medium, with solved/revision tracking.</p>
+  </a>
+  <a class="tile" href="/dbms">
+    <span class="icon">🗄️</span>
+    <h2>DBMS &amp; SQL</h2>
+    <p>Core database and SQL interview questions with reviewed/important flags.</p>
+  </a>
+  <a class="tile" href="/azure">
+    <span class="icon">☁️</span>
+    <h2>Microsoft Azure</h2>
+    <p>Cloud services, networking, messaging, and DevOps interview questions.</p>
+  </a>
+  <a class="tile" href="/java">
+    <span class="icon">☕</span>
+    <h2>Java &amp; Microservices</h2>
+    <p>JVM internals, concurrency, streams, Spring Boot, and testing — grouped by category.</p>
+  </a>
+  <a class="tile" href="/docker">
+    <span class="icon">🐳</span>
+    <h2>Docker + CI/CD + Jenkins</h2>
+    <p>69 questions for ~3 years experience, including scenario-based troubleshooting.</p>
+  </a>
+  <a class="tile" href="/misc">
+    <span class="icon">📝</span>
+    <h2>Misc — Your Own Questions</h2>
+    <p>Add, edit, and delete your own question + answer pairs. Full CRUD.</p>
+  </a>
+</div>
+</div>
+</body>
+</html>
