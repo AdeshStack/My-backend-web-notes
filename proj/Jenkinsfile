@@ -1,0 +1,82 @@
+// CI PIPELINE (Windows Jenkins agent) — runs on every commit.
+// Stages: checkout -> build & unit test -> build Docker image -> push to Docker Hub.
+//
+// Prereqs in Jenkins:
+//   1. Maven installed on the Jenkins agent and on PATH (or configure a Maven tool
+//      in Manage Jenkins -> Tools, and reference it via the "tools" block).
+//   2. Docker Desktop running, with `docker version` working from the same shell
+//      Jenkins uses.
+//   3. A Jenkins Credential of kind "Username with password" with ID "dockerhub-creds"
+//      (Docker Hub username + a Docker Hub access token, not your account password).
+//
+// Before first run: replace YOUR_DOCKERHUB_USERNAME below with your real Docker Hub username.
+
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME = 'adeshprime17/interview-prep-hub'
+        IMAGE_TAG  = "${env.BUILD_NUMBER}"
+    }
+
+    options {
+        timestamps()
+        disableConcurrentBuilds()
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                echo 'Checking out source code...'
+                checkout scm
+            }
+        }
+
+        stage('Build & Unit Test') {
+            steps {
+                echo 'Building and testing with Maven...'
+                bat 'mvn -B clean verify'
+            }
+            post {
+                always {
+                    junit testResults: '**/target/surefire-reports/*.xml', allowEmptyResults: true
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                echo 'Building Docker image...'
+                bat 'docker build -t %IMAGE_NAME%:%IMAGE_TAG% -t %IMAGE_NAME%:latest .'
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            steps {
+                echo 'Pushing Docker image to Docker Hub...'
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    bat '''
+                        echo Logging into Docker Hub...
+                        docker login -u %DOCKER_USERNAME% -p %DOCKER_PASSWORD%
+                        docker push %IMAGE_NAME%:%IMAGE_TAG%
+                        docker push %IMAGE_NAME%:latest
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            bat 'docker logout || exit 0'
+            echo 'Pipeline finished.'
+        }
+        success {
+            echo "Pushed %IMAGE_NAME%:%IMAGE_TAG% and :latest to Docker Hub."
+        }
+        failure {
+            echo 'CI pipeline failed — check the stage logs above.'
+        }
+    }
+}

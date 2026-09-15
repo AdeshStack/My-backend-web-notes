@@ -1,0 +1,95 @@
+// CD PIPELINE — run manually (or trigger it after the CI pipeline) to deploy the
+// latest image to THIS machine, connected to YOUR OWN local MySQL install.
+//
+// Why host.docker.internal instead of localhost:
+//   Inside a container, "localhost" means the container itself, not your machine.
+//   host.docker.internal is Docker's special DNS name for reaching services running
+//   on the host — which is exactly how your local MySQL server is reachable from here.
+//   (Same concept as the "Why doesn't localhost work between two containers?" and
+//   "What is host.docker.internal?" questions in your own Docker interview tracker.)
+//
+// Prereqs in Jenkins:
+//   1. A Jenkins Credential of kind "Username with password" with ID "local-mysql-creds"
+//      holding your LOCAL MySQL username/password (e.g. an "appuser" you create below,
+//      not necessarily root).
+//   2. Your local MySQL must accept non-localhost connections — see MySQL setup notes
+//      in JENKINS_CICD_SETUP.md.
+//
+// Before first run: replace YOUR_DOCKERHUB_USERNAME below with your real Docker Hub username.
+
+pipeline {
+    agent any
+
+    parameters {
+        string(name: 'IMAGE_TAG', defaultValue: 'latest', description: 'Docker Hub tag to deploy')
+    }
+
+    environment {
+        IMAGE_NAME     = 'YOUR_DOCKERHUB_USERNAME/interview-prep-hub'
+        CONTAINER_NAME = 'interview-prep-hub'
+        APP_PORT       = '8080'
+        DB_HOST        = 'host.docker.internal'
+        DB_PORT        = '3306'
+        DB_NAME        = 'dsa_tracker'
+    }
+
+    stages {
+
+        stage('Pull Latest Image') {
+            steps {
+                sh "docker pull ${IMAGE_NAME}:${params.IMAGE_TAG}"
+            }
+        }
+
+        stage('Stop Existing Container') {
+            steps {
+                sh "docker stop ${CONTAINER_NAME} || true"
+                sh "docker rm ${CONTAINER_NAME} || true"
+            }
+        }
+
+        stage('Run New Container') {
+            steps {
+                withCredentials([usernamePassword(
+                        credentialsId: 'local-mysql-creds',
+                        usernameVariable: 'DB_USER',
+                        passwordVariable: 'DB_PASS')]) {
+                    sh '''
+                        docker run -d \
+                          --name "$CONTAINER_NAME" \
+                          --add-host=host.docker.internal:host-gateway \
+                          -p "$APP_PORT":8080 \
+                          -e SPRING_DATASOURCE_URL="jdbc:mysql://$DB_HOST:$DB_PORT/$DB_NAME?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC" \
+                          -e SPRING_DATASOURCE_USERNAME="$DB_USER" \
+                          -e SPRING_DATASOURCE_PASSWORD="$DB_PASS" \
+                          "$IMAGE_NAME":"$IMAGE_TAG"
+                    '''
+                }
+            }
+        }
+
+        stage('Health Check') {
+            steps {
+                sh '''
+                    for i in $(seq 1 10); do
+                      if curl -sf http://localhost:"$APP_PORT"/ > /dev/null; then
+                        echo "App is up at http://localhost:$APP_PORT/"
+                        exit 0
+                      fi
+                      echo "Waiting for app to start... ($i/10)"
+                      sleep 3
+                    done
+                    echo "App did not become healthy in time — recent logs:"
+                    docker logs "$CONTAINER_NAME" --tail 50
+                    exit 1
+                '''
+            }
+        }
+    }
+
+    post {
+        failure {
+            echo "CD pipeline failed — see the failing stage's logs above."
+        }
+    }
+}
