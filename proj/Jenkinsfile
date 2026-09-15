@@ -1,10 +1,9 @@
 // CI PIPELINE (Windows Jenkins agent) — runs on every commit.
-// Project lives in the "proj" subfolder of the repo, so every step that touches
-// pom.xml/Dockerfile runs inside dir('proj').
+// Stages: checkout -> build & unit test -> build Docker image -> push to Docker Hub.
 //
 // Prereqs in Jenkins:
-//   1. Either Maven installed globally on PATH, OR a Maven wrapper (mvnw.cmd + .mvn/)
-//      committed inside proj/ — this script uses whichever is present automatically.
+//   1. Maven installed on the Jenkins agent and on PATH (or configure a Maven tool
+//      in Manage Jenkins -> Tools, and reference it via the "tools" block).
 //   2. Docker Desktop running, with `docker version` working from the same shell
 //      Jenkins uses.
 //   3. A Jenkins Credential of kind "Username with password" with ID "dockerhub-creds"
@@ -16,7 +15,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'YOUR_DOCKERHUB_USERNAME/interview-prep-hub'
+        IMAGE_NAME = 'adeshprime17/interview-prep-hub'
         IMAGE_TAG  = "${env.BUILD_NUMBER}"
     }
 
@@ -37,19 +36,11 @@ pipeline {
         stage('Build & Unit Test') {
             steps {
                 echo 'Building and testing with Maven...'
-                dir('proj') {
-                    bat '''
-                        if exist mvnw.cmd (
-                            mvnw.cmd clean verify
-                        ) else (
-                            mvn -B clean verify
-                        )
-                    '''
-                }
+                bat 'mvn -B clean verify'
             }
             post {
                 always {
-                    junit testResults: 'proj/target/surefire-reports/*.xml', allowEmptyResults: true
+                    junit testResults: '**/target/surefire-reports/*.xml', allowEmptyResults: true
                 }
             }
         }
@@ -57,9 +48,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 echo 'Building Docker image...'
-                dir('proj') {
-                    bat 'docker build -t %IMAGE_NAME%:%IMAGE_TAG% -t %IMAGE_NAME%:latest .'
-                }
+                bat 'docker build -t %IMAGE_NAME%:%IMAGE_TAG% -t %IMAGE_NAME%:latest .'
             }
         }
 
