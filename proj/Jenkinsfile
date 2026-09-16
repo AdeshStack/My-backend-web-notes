@@ -23,8 +23,10 @@ pipeline {
         stage('Build & Test') {
             steps {
                 echo 'Building Spring Boot application...'
-
+             dir('proj'){
+                 
                 bat 'mvnw.cmd clean verify'
+             }
             }
 
             post {
