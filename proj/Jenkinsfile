@@ -2,6 +2,10 @@ pipeline {
 
     agent any
 
+    tools {
+        maven 'Maven-3.9'
+    }
+
     environment {
         DOCKER_IMAGE = "adeshprime17/interview-prep-hub"
     }
