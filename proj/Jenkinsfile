@@ -25,7 +25,7 @@ pipeline {
                 echo 'Building Spring Boot application...'
              dir('proj'){
                  
-                bat 'mvnw.cmd clean verify'
+                bat 'mvn clean verify'
              }
             }
 
