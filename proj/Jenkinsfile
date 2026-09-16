@@ -23,16 +23,16 @@ pipeline {
         stage('Build & Test') {
             steps {
                 echo 'Building Spring Boot application...'
-             dir('proj'){
-                 
-                bat 'mvn clean verify'
-             }
+
+                dir('proj') {
+                    bat 'mvn clean verify'
+                }
             }
 
             post {
                 always {
                     junit(
-                        testResults: '**/target/surefire-reports/*.xml',
+                        testResults: 'proj/**/target/surefire-reports/*.xml',
                         allowEmptyResults: true
                     )
                 }
@@ -43,10 +43,12 @@ pipeline {
             steps {
                 echo 'Building Docker image...'
 
-                bat '''
-                    docker build -t %DOCKER_IMAGE%:%BUILD_NUMBER% .
-                    docker tag %DOCKER_IMAGE%:%BUILD_NUMBER% %DOCKER_IMAGE%:latest
-                '''
+                dir('proj') {
+                    bat '''
+                        docker build -t %DOCKER_IMAGE%:%BUILD_NUMBER% .
+                        docker tag %DOCKER_IMAGE%:%BUILD_NUMBER% %DOCKER_IMAGE%:latest
+                    '''
+                }
             }
         }
 
