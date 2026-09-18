@@ -33,8 +33,8 @@ pipeline {
                 }
             }
 
-            post {
-                always {
+            post {  //  fter the pipeline or a stage finishes.
+                always {    //regardless of whether the pipeline succeeds or fails.
                     junit(
                         testResults: 'proj/**/target/surefire-reports/*.xml',
                         allowEmptyResults: true
