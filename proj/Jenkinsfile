@@ -3,7 +3,7 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven-3.9'
+        maven 'Maven-3.9' // mentioning the maven version to be used
     }
 
     environment {
