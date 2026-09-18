@@ -17,10 +17,10 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
+        stage('Checkout') {  // getting the source code 
             steps {
                 echo 'Checking out source code...'
-                checkout scm
+                checkout scm      //It refers to the system where your source code is stored
             }
         }
 
